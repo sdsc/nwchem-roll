@@ -1,0 +1,20 @@
+<?xml version="1.0" standalone="no"?>
+
+<graph>
+
+  <description>
+  NWCHEM (Northwest Chem)
+  </description>
+
+  <copyright>
+ Pacific Northwest Laboratories
+  </copyright>
+
+  <changelog>
+  </changelog>
+
+  <edge from="base">
+    <to>nwchem-common</to>
+  </edge>
+
+</graph>
