@@ -3,28 +3,28 @@
 <kickstart>
 
   <description>
-  NWChem (Northwest Chem)
+  NWCHEM
+  pgi
   </description>
 
   <copyright>
-  Pacific Northwest Laboratories
   </copyright>
 
   <changelog>
   </changelog>
 
   <!-- Set of RPMs to install, surrounded by individual package tags. -->
-  <package>gamess</package>
+  <package>nwchem_pgi</package>
 
   <post>
 mkdir /opt/modulefiles/applications/nwchem
 chmod 0755 /opt/modulefiles/applications/nwchem
-ln -s /opt/modulefiles/applications/application /opt/modulefiles/applications/nwchem/5.1.1
-<file name="/opt/modulefiles/applications/gamess/.version.5.1.1">
+ln -s /opt/modulefiles/applications/application /opt/modulefiles/applications/nwchem/5.5.1
+<file name="/opt/modulefiles/applications/nwchem/.version.5.1.1">
 #%Module1.0
 set ModulesVersion "5.1.1"
 </file>
-ln -s /opt/modulefiles/applications/gamess/.version.5.1.1 /opt/modulefiles/applications/gamess/.version
+ln -s /opt/modulefiles/applications/nwchem/.version.5.1.1 /opt/modulefiles/applications/nwchem/.version
 </post>
 
 </kickstart>
