@@ -3,7 +3,6 @@ export NWCHEM_TOP=/tmp/nwchem
 export NWCHEM_TARGET=LINUX64
 export USE_MPI=y
 export USE_MPIF=y
-export LIBMPI=-lmpich
-export MPI_LIB=/opt/pgi/mpichmx_pgi 
+export LIBMPI='-lmpich  -Wl,-rpath,/opt/mx/lib64,-rpath,/opt/mx/lib -L/opt/mx/lib64 -L/opt/mx/lib/ -lmyriexpress  -lpthread  -lrt'
+export MPI_LIB=/opt/pgi/mpichmx_pgi/lib
 export MPI_INCLUDE=/opt/pgi/mpichmx_pgi/include
-
