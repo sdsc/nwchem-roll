@@ -1,0 +1,10 @@
+nwchem_basis_library /opt/pgi/nwchem/data/libraries/
+nwchem_nwpw_library /opt/pgi/nwchem/data/libraryps/
+ffield amber
+amber_1 /opt/pgi/nwchem/data/amber_s/
+amber_2 /opt/pgi/nwchem/data/amber_q/
+amber_3 /opt/pgi/nwchem/data/amber_x/
+amber_4 /opt/pgi/nwchem/data/amber_u/
+spce    /opt/pgi/nwchem/data/solvents/spce.rst
+charmm_s /opt/pgi/nwchem/data/charmm_s/
+charmm_x /opt/pgi/nwchem/data/charmm_x/
