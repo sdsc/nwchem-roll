@@ -73,6 +73,7 @@ build:
 	(cd BUILD_PGI/$(PKG_NAME)-$(PVERSION); \
          export PATH=$(PGI_PATH):$(MPI_PATH):$$PATH; \
          export LD_LIBRARY_PATH=$(LIB_PATH):$$LD_LIBRARY_PATH;  \
+         rm -f /tmp/nwchem-1.1.1; \
          ln -s `pwd` /tmp/nwchem-5.1.1;. nwchemrc;cd src;touch config/nwchem_config.h; \
          make nwchem_config NWCHEM_MODULES=all; make FC=pgf90 CC=pgcc );
 install::
