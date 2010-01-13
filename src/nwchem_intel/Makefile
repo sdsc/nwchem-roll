@@ -57,25 +57,23 @@
 
 PKG_NAME=nwchem
 PVERSION=5.1.1
-PKGROOT = /opt/intel/$(PKG_NAME)
+PKGROOT = /opt/$(PKG_NAME)_intel
 REDHAT.ROOT = $(PWD)/../../
 INTEL_BASE=/opt/intel/Compiler/11.1/046/
 MKL=$(INTEL_BASE)/mkl
 F_INTEL_ENV=$(INTEL_BASE)/bin/intel64/ifortvars_intel64.sh
 C_INTEL_ENV=$(INTEL_BASE)/bin/intel64/iccvars_intel64.sh
-MPI_PATH=/opt/intel/mpichmx_intel/bin
 INTEL_LICENSE_FILE=/opt/flexlm/license/license-intel.txt
 
 -include $(ROCKSROOT)/etc/Rules.mk
 build:
 	(echo $(PVERSION))
-	mkdir -p BUILD_INTEL
 	mkdir -p $(ROOT)/$(PKGROOT)
-	(cd BUILD_INTEL;tar xvf ../$(PKG_NAME)-$(PVERSION).tar.gz)
-	(cp patch-files/$(PKG_NAME)-$(PVERSION)/nwchemrc BUILD_INTEL/$(PKG_NAME)-$(PVERSION))
-	(cp patch-files/$(PKG_NAME)-$(PVERSION)/GNUmakefile.tce  BUILD_INTEL/$(PKG_NAME)-$(PVERSION)/src/tce/GNUmakefile)
-	(cp patch-files/$(PKG_NAME)-$(PVERSION)/GNUmakefile.ccsd_t  BUILD_INTEL/$(PKG_NAME)-$(PVERSION)/src/tce/ccsd_t/GNUmakefile)
-	(cd BUILD_INTEL/$(PKG_NAME)-$(PVERSION); \
+	(tar xvf $(PKG_NAME)-$(PVERSION).tar.gz)
+	(cp patch-files/$(PKG_NAME)-$(PVERSION)/nwchemrc $(PKG_NAME)-$(PVERSION))
+	(cp patch-files/$(PKG_NAME)-$(PVERSION)/GNUmakefile.tce  $(PKG_NAME)-$(PVERSION)/src/tce/GNUmakefile)
+	(cp patch-files/$(PKG_NAME)-$(PVERSION)/GNUmakefile.ccsd_t  $(PKG_NAME)-$(PVERSION)/src/tce/ccsd_t/GNUmakefile)
+	(cd $(PKG_NAME)-$(PVERSION); \
         . $(F_INTEL_ENV); . $(C_INTEL_ENV); export INTEL_LICENSE_FILE=$(INTEL_LICENSE_FILE); \
          rm -f /tmp/nwchem-5.1.1; \
          ln -s `pwd` /tmp/nwchem-5.1.1;. nwchemrc;cd src;touch config/nwchem_config.h; \
@@ -85,7 +83,7 @@ install::
 	mkdir -p $(ROOT)/$(PKGROOT)/bin
 	mkdir -p $(ROOT)/$(PKGROOT)/data
 	(cp patch-files/$(PKG_NAME)-$(PVERSION)/.nwchemrc $(ROOT)/$(PKGROOT))
-	(cd BUILD_INTEL/$(PKG_NAME)-$(PVERSION); \
+	(cd $(PKG_NAME)-$(PVERSION); \
         cp bin/LINUX64/nwchem $(ROOT)/$(PKGROOT)/bin;\
         cd src/basis;cp -r libraries $(ROOT)/$(PKGROOT)/data;\
         cd ..;cp -r data $(ROOT)/$(PKGROOT);\
@@ -93,4 +91,4 @@ install::
 
 
 clean::
-	rm -rf BUILD_INTEL
+	rm -rf $(PKG_NAME)-$(PVERSION)
