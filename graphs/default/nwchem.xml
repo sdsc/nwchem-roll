@@ -14,10 +14,7 @@
   </changelog>
 
   <edge from="base">
-    <to>nwchem_intel-common</to>
-  </edge>
-  <edge from="base">
-    <to>nwchem_pgi-common</to>
+    <to>nwchem-common</to>
   </edge>
 
 </graph>
