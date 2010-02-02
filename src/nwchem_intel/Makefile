@@ -57,7 +57,7 @@
 
 PKG_NAME=nwchem
 PVERSION=5.1.1
-PKGROOT = /opt/$(PKG_NAME)_intel
+PKGROOT = /opt/$(PKG_NAME)
 REDHAT.ROOT = $(PWD)/../../
 INTEL_BASE=/opt/intel/Compiler/11.1/046/
 MKL=$(INTEL_BASE)/mkl
