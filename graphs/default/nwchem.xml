@@ -16,5 +16,8 @@
   <edge from="base">
     <to>nwchem-common</to>
   </edge>
+  <order head="base">
+    <tail>nwchem-common</tail>
+  </order>
 
 </graph>
