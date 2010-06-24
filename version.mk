@@ -1,4 +1,4 @@
-ROLLNAME = nwchem_intel
+ROLLNAME = nwchem
 RELEASE = 0
 COLOR   = orange
 
