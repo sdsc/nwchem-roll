@@ -58,6 +58,8 @@ PKG_NAME=nwchem
 PVERSION=5.1.1
 PKGROOT = /opt/$(PKG_NAME)
 
+-include $(ROCKSROOT)/etc/Rules.mk
+
 build:
 	(echo $(PVERSION))
 	(tar xvf $(PKG_NAME)-$(PVERSION).tar.gz)
