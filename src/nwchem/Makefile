@@ -57,6 +57,7 @@
 PKG_NAME=nwchem
 PVERSION=5.1.1
 PKGROOT = /opt/$(PKG_NAME)
+REDHAT.ROOT = $(PWD)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 
