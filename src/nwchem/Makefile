@@ -55,33 +55,31 @@
 # @Copyright@
 # 
 PKG_NAME=nwchem
-PVERSION=5.1.1
+VERSION=5.1.1
 PKGROOT = /opt/$(PKG_NAME)
 REDHAT.ROOT = $(PWD)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
-
 build:
-	(echo $(PVERSION))
-	(tar xvf $(PKG_NAME)-$(PVERSION).tar.gz)
-	(cp patch-files/$(PKG_NAME)-$(PVERSION)/nwchemrc $(PKG_NAME)-$(PVERSION))
-	(cp patch-files/$(PKG_NAME)-$(PVERSION)/GNUmakefile.tce  $(PKG_NAME)-$(PVERSION)/src/tce/GNUmakefile)
-	(cp patch-files/$(PKG_NAME)-$(PVERSION)/GNUmakefile.ccsd_t  $(PKG_NAME)-$(PVERSION)/src/tce/ccsd_t/GNUmakefile)
-	(cd $(PKG_NAME)-$(PVERSION); \
+	(echo $(VERSION))
+	(tar xvf $(PKG_NAME)-$(VERSION).tar.gz)
+	(cp patch-files/$(PKG_NAME)-$(VERSION)/nwchemrc $(PKG_NAME)-$(VERSION))
+	(cp patch-files/$(PKG_NAME)-$(VERSION)/GNUmakefile.tce  $(PKG_NAME)-$(VERSION)/src/tce/GNUmakefile)
+	(cp patch-files/$(PKG_NAME)-$(VERSION)/GNUmakefile.ccsd_t  $(PKG_NAME)-$(VERSION)/src/tce/ccsd_t/GNUmakefile)
+	(cd $(PKG_NAME)-$(VERSION); \
          rm -f /tmp/nwchem-5.1.1; \
          ln -s `pwd` /tmp/nwchem-5.1.1;. nwchemrc;cd src;touch config/nwchem_config.h; \
          make nwchem_config NWCHEM_MODULES=all; make FC=gfortran CC=gcc );
 install::
-	mkdir -p $(PKGROOT)
-	mkdir -p $(PKGROOT)/bin
-	mkdir -p $(PKGROOT)/data
-	(cp patch-files/$(PKG_NAME)-$(PVERSION)/.nwchemrc $(PKGROOT))
-	(cd $(PKG_NAME)-$(PVERSION); \
-        cp bin/LINUX64/nwchem $(PKGROOT)/bin;\
-        cd src/basis;cp -r libraries $(PKGROOT)/data;\
-        cd ..;cp -r data $(PKGROOT);\
-        cd nwpw; cp -r libraryps $(PKGROOT)/data)
-
+	mkdir -p $(ROOT)/$(PKGROOT)
+	mkdir -p $(ROOT)/$(PKGROOT)/bin
+	mkdir -p $(ROOT)/$(PKGROOT)/data
+	(cp patch-files/$(PKG_NAME)-$(VERSION)/.nwchemrc $(ROOT)/$(PKGROOT))
+	(cd $(PKG_NAME)-$(VERSION); \
+        cp bin/LINUX64/nwchem $(ROOT)/$(PKGROOT)/bin;\
+        cd src/basis;cp -r libraries $(ROOT)/$(PKGROOT)/data;\
+        cd ..;cp -r data $(ROOT)/$(PKGROOT);\
+        cd nwpw; cp -r libraryps $(ROOT)/$(PKGROOT)/data)
 
 clean::
-	rm -rf $(PKG_NAME)-$(PVERSION)
+	rm -rf $(ROOT)/$(PKG_NAME)-$(VERSION)
