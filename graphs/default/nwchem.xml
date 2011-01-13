@@ -2,22 +2,21 @@
 
 <graph>
 
-  <description>
-  NWCHEM (Northwest Chem)
-  </description>
+<description>
+NWCHEM (Northwest Chem)
+http://www.nwchem-sw.org/index.php/Main_Page
+</description>
 
-  <copyright>
- Pacific Northwest Laboratories
-  </copyright>
+<copyright>
+Copyright (c) 2000 - 2011 The Regents of the University of California.
+All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
+</copyright>
 
-  <changelog>
-  </changelog>
-
-  <edge from="base">
-    <to>nwchem-common</to>
-  </edge>
-  <order head="base">
-    <tail>nwchem-common</tail>
-  </order>
+<edge from="base">
+  <to>nwchem-common</to>
+</edge>
+<order head="base">
+  <tail>nwchem-common</tail>
+</order>
 
 </graph>

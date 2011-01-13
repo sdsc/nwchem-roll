@@ -54,32 +54,38 @@
 #
 # @Copyright@
 # 
-PKG_NAME=nwchem
-VERSION=5.1.1
-PKGROOT = /opt/$(PKG_NAME)
+PKGROOT = /opt/$(NAME)
 REDHAT.ROOT = $(PWD)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 build:
-	(echo $(VERSION))
-	(tar xvf $(PKG_NAME)-$(VERSION).tar.gz)
-	(cp patch-files/$(PKG_NAME)-$(VERSION)/nwchemrc $(PKG_NAME)-$(VERSION))
-	(cp patch-files/$(PKG_NAME)-$(VERSION)/GNUmakefile.tce  $(PKG_NAME)-$(VERSION)/src/tce/GNUmakefile)
-	(cp patch-files/$(PKG_NAME)-$(VERSION)/GNUmakefile.ccsd_t  $(PKG_NAME)-$(VERSION)/src/tce/ccsd_t/GNUmakefile)
-	(cd $(PKG_NAME)-$(VERSION); \
-         rm -f /tmp/nwchem-5.1.1; \
-         ln -s `pwd` /tmp/nwchem-5.1.1;. nwchemrc;cd src;touch config/nwchem_config.h; \
-         make nwchem_config NWCHEM_MODULES=all; make FC=gfortran CC=gcc );
+	tar xvf $(NAME)-$(VERSION).tar.gz
+	cp patch-files/$(NAME)-$(VERSION)/nwchemrc $(NAME)-$(VERSION)/
+	cp patch-files/$(NAME)-$(VERSION)/GNUmakefile.tce  $(NAME)-$(VERSION)/src/tce/GNUmakefile
+	cp patch-files/$(NAME)-$(VERSION)/GNUmakefile.ccsd_t  $(NAME)-$(VERSION)/src/tce/ccsd_t/GNUmakefile
+	( \
+	  cd $(NAME)-$(VERSION); \
+	  rm -f /tmp/nwchem-5.1.1; \
+	  ln -s `pwd` /tmp/nwchem-5.1.1; \
+	  . nwchemrc; \
+	  cd src; \
+	  touch config/nwchem_config.h; \
+	  make nwchem_config NWCHEM_MODULES=all; \
+	   make FC=gfortran CC=gcc \
+	)
+
 install::
 	mkdir -p $(ROOT)/$(PKGROOT)
 	mkdir -p $(ROOT)/$(PKGROOT)/bin
 	mkdir -p $(ROOT)/$(PKGROOT)/data
-	(cp patch-files/$(PKG_NAME)-$(VERSION)/.nwchemrc $(ROOT)/$(PKGROOT))
-	(cd $(PKG_NAME)-$(VERSION); \
-        cp bin/LINUX64/nwchem $(ROOT)/$(PKGROOT)/bin;\
-        cd src/basis;cp -r libraries $(ROOT)/$(PKGROOT)/data;\
-        cd ..;cp -r data $(ROOT)/$(PKGROOT);\
-        cd nwpw; cp -r libraryps $(ROOT)/$(PKGROOT)/data)
+	cp patch-files/$(NAME)-$(VERSION)/.nwchemrc $(ROOT)/$(PKGROOT)
+	( \
+	  cd $(NAME)-$(VERSION); \
+	  cp bin/LINUX64/nwchem $(ROOT)/$(PKGROOT)/bin; \
+	  cp -r src/basis/libraries $(ROOT)/$(PKGROOT)/data; \
+	  cp -r src/data $(ROOT)/$(PKGROOT); \
+	  cp -r src/nwpw/libraryps $(ROOT)/$(PKGROOT)/data \
+	)
 
 clean::
-	rm -rf $(ROOT)/$(PKG_NAME)-$(VERSION)
+	rm -rf $(NAME)-$(VERSION)
