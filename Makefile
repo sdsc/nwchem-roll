@@ -63,4 +63,3 @@ default:	roll
 
 clean::
 	rm -f _arch
-	rm -fr RPMS SRPMS
