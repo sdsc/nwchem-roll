@@ -53,34 +53,76 @@
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # @Copyright@
-# 
-PKGROOT = /opt/$(NAME)
+
+PKGROOT = /opt/nwchem
+SOURCE = nwchem-$(VERSION)
 REDHAT.ROOT = $(PWD)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
+
+CC = gcc
+FCC = gfortran
+MPICC = mpicxx
+ifdef ROLLCOMPILER
+  COMPILERSETUP = \
+    if test -e /etc/profile.d/modules.sh; then \
+      . /etc/profile.d/modules.sh; \
+      module load $(ROLLCOMPILER); \
+    fi
+  ifeq ("$(ROLLCOMPILER)", "intel")
+    CC = icc
+    FCC = ifort
+    MPICC = mpic++
+  endif
+else
+  COMPILERSETUP = echo noop > /dev/null
+endif
+
+ifdef ROLLNETWORK
+  OPENMPISUFFIX = _$(ROLLNETWORK)
+else
+  OPENMPISUFFIX =
+endif
+
+MPISETUP = \
+  if test -e /etc/profile.d/modules.sh; then \
+    . /etc/profile.d/modules.sh; \
+    module load openmpi$(OPENMPISUFFIX); \
+  fi; \
+  export MPI_HOME=`which $(MPICC) | perl -pe 's!/bin/.*!!'`; \
+  if test -z "$MPI_HOME"; then \
+    export MPI_HOME=/opt/openmpi; \
+  fi; \
+  echo Using MPI from $${MPI_HOME}; \
+  export PATH=$${PATH}:$${MPI_HOME}/bin; \
+  export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
+
 build:
-	tar xvf $(NAME)-$(VERSION).tar.gz
-	cp patch-files/$(NAME)-$(VERSION)/nwchemrc $(NAME)-$(VERSION)/
-	cp patch-files/$(NAME)-$(VERSION)/GNUmakefile.tce  $(NAME)-$(VERSION)/src/tce/GNUmakefile
-	cp patch-files/$(NAME)-$(VERSION)/GNUmakefile.ccsd_t  $(NAME)-$(VERSION)/src/tce/ccsd_t/GNUmakefile
+	tar xvf $(SOURCE).tar.gz
+	cp patch-files/nwchemrc $(SOURCE)/
+	cp patch-files/GNUmakefile.tce  $(SOURCE)/src/tce/GNUmakefile
+	cp patch-files/GNUmakefile.ccsd_t  $(SOURCE)/src/tce/ccsd_t/GNUmakefile
 	( \
-	  cd $(NAME)-$(VERSION); \
+	  $(COMPILERSETUP); \
+	  $(MPISETUP); \
+	  cd $(SOURCE); \
+	  perl -pi -e "s!ROLLMPIHOME!$${MPI_HOME}!g" nwchemrc; \
 	  rm -f /tmp/nwchem-5.1.1; \
 	  ln -s `pwd` /tmp/nwchem-5.1.1; \
 	  . nwchemrc; \
 	  cd src; \
 	  touch config/nwchem_config.h; \
 	  make nwchem_config NWCHEM_MODULES=all; \
-	   make FC=gfortran CC=gcc \
+	  make FC=$(FCC) CC=$(CC) \
 	)
 
 install::
 	mkdir -p $(ROOT)/$(PKGROOT)
 	mkdir -p $(ROOT)/$(PKGROOT)/bin
 	mkdir -p $(ROOT)/$(PKGROOT)/data
-	cp patch-files/$(NAME)-$(VERSION)/.nwchemrc $(ROOT)/$(PKGROOT)
+	cp patch-files/dotnwchemrc $(ROOT)/$(PKGROOT)/.nwchemrc
 	( \
-	  cd $(NAME)-$(VERSION); \
+	  cd $(SOURCE); \
 	  cp bin/LINUX64/nwchem $(ROOT)/$(PKGROOT)/bin; \
 	  cp -r src/basis/libraries $(ROOT)/$(PKGROOT)/data; \
 	  cp -r src/data $(ROOT)/$(PKGROOT); \
@@ -88,4 +130,4 @@ install::
 	)
 
 clean::
-	rm -rf $(NAME)-$(VERSION)
+	rm -rf $(SOURCE)

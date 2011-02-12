@@ -1,0 +1,9 @@
+export LARGE_FILES=TRUE
+export NWCHEM_TOP=/tmp/nwchem
+export NWCHEM_TARGET=LINUX64
+export USE_MPI=y
+export USE_MPIF=y
+export MPI_HOME=ROLLMPIHOME
+export MPI_LIB=${MPI_HOME}/lib
+export MPI_INCLUDE=${MPI_HOME}/include
+export LIBMPI=" -I${MPI_INCLUDE} -pthread -L${MPI_LIB} -lmpi_f77 -lmpi -lopen-rte -lopen-pal -ldl -Wl,--export-dynamic -lnsl -lutil -lm -ldl"
