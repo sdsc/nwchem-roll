@@ -1,3 +1,3 @@
-NAME	= nwchem
+NAME	= nwchem$(ROLLSUFFIX)
 VERSION	= 5.1.1
 RELEASE	= 1

@@ -1,4 +1,4 @@
-ROLLNAME = nwchem
+ROLLNAME = nwchem$(ROLLSUFFIX)
 RELEASE = 0
 COLOR   = orange
 
