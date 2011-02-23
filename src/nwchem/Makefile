@@ -7,7 +7,7 @@
 # 		         www.rocksclusters.org
 # 		        version 4.3 (Mars Hill)
 #
-# Copyright (c) 2000 - 2007 The Regents of the University of California.
+# Copyright (c) 2000 - 2011 The Regents of the University of California.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -54,34 +54,29 @@
 #
 # @Copyright@
 
+ifndef ROLLCOMPILER
+  ROLLCOMPILER = gnu
+endif
+ifndef ROLLNETWORK
+  ROLLNETWORK = eth
+endif
+
 PKGROOT = /opt/nwchem
 SOURCE = nwchem-$(VERSION)
 REDHAT.ROOT = $(PWD)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 
-CC = gcc
-FCC = gfortran
-MPICC = mpicxx
-ifdef ROLLCOMPILER
-  COMPILERSETUP = \
-    if test -e /etc/profile.d/modules.sh; then \
-      . /etc/profile.d/modules.sh; \
-      module load $(ROLLCOMPILER); \
-    fi
-  ifeq ("$(ROLLCOMPILER)", "intel")
-    CC = icc
-    FCC = ifort
-    MPICC = mpic++
-  endif
-else
-  COMPILERSETUP = echo noop > /dev/null
-endif
+COMPILERSETUP = \
+  if test -e /etc/profile.d/modules.sh; then \
+    . /etc/profile.d/modules.sh; \
+    module load $(ROLLCOMPILER); \
+  fi
 
-ifdef ROLLNETWORK
-  OPENMPISUFFIX = _$(ROLLNETWORK)
-else
+ifeq ("$(ROLLNETWORK)", "eth")
   OPENMPISUFFIX =
+else
+  OPENMPISUFFIX = _$(ROLLNETWORK)
 endif
 
 MPISETUP = \
@@ -89,13 +84,21 @@ MPISETUP = \
     . /etc/profile.d/modules.sh; \
     module load openmpi$(OPENMPISUFFIX); \
   fi; \
-  export MPI_HOME=`which $(MPICC) | perl -pe 's!/bin/.*!!'`; \
-  if test -z "$MPI_HOME"; then \
+  export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
+  if test -z "$${MPI_HOME}"; then \
     export MPI_HOME=/opt/openmpi; \
   fi; \
   echo Using MPI from $${MPI_HOME}; \
   export PATH=$${PATH}:$${MPI_HOME}/bin; \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
+
+
+CC = gcc
+FCC = gfortran
+ifeq ("$(ROLLCOMPILER)", "intel")
+  CC = icc
+  FCC = ifort
+endif
 
 build:
 	tar xvf $(SOURCE).tar.gz

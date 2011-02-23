@@ -1,5 +1,5 @@
 ROLLNAME = nwchem$(ROLLSUFFIX)
-RELEASE = 0
-COLOR   = orange
+RELEASE  = 0
+COLOR    = orange
 
 REDHAT.ROOT = $(PWD)
