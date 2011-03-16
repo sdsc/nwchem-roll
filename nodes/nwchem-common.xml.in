@@ -15,6 +15,14 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <package>nwchem_ROLLCOMPILER_ROLLNETWORK</package>
 
 <post>
+
+<file name="/etc/profile.d/nwchem.csh" perms="0644">
+set path = ( /opt/nwchem/bin $path )
+</file>
+<file name="/etc/profile.d/nwchem.sh" perms="0644">
+export PATH=/opt/nwchem/bin:$PATH
+</file>
+
 </post>
 
 </kickstart>
