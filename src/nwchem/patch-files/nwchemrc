@@ -1,5 +1,5 @@
 export LARGE_FILES=TRUE
-export NWCHEM_TOP=/tmp/nwchem
+export NWCHEM_TOP=/tmp/nwchem-6.0
 export NWCHEM_TARGET=LINUX64
 export USE_MPI=y
 export USE_MPIF=y
