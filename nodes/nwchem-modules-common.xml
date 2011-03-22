@@ -33,15 +33,15 @@ if test -f /etc/profile.d/nwchem.sh; then
   /bin/rm -f /etc/profile.d/nwchem.*
   /bin/mkdir -m 0755 -p /opt/modulefiles/applications/nwchem
 
-<file name="/opt/modulefiles/applications/nwchem/5.1.1" perms="0644">
+<file name="/opt/modulefiles/applications/nwchem/6.0" perms="0644">
 #%Module1.0
 prepend-path PATH /opt/nwchem/bin
 </file>
-<file name="/opt/modulefiles/applications/nwchem/.version.5.1.1">
+<file name="/opt/modulefiles/applications/nwchem/.version.6.0">
 #%Module1.0
-set ModulesVersion "5.1.1"
+set ModulesVersion "6.0"
 </file>
-/bin/ln -s /opt/modulefiles/applications/nwchem/.version.5.1.1 \
+/bin/ln -s /opt/modulefiles/applications/nwchem/.version.6.0 \
            /opt/modulefiles/applications/nwchem/.version
 fi
 
