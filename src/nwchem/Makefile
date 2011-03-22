@@ -103,15 +103,15 @@ endif
 build:
 	tar xvf $(SOURCE).tar.gz
 	cp patch-files/nwchemrc $(SOURCE)/
-	cp patch-files/GNUmakefile.tce  $(SOURCE)/src/tce/GNUmakefile
-	cp patch-files/GNUmakefile.ccsd_t  $(SOURCE)/src/tce/ccsd_t/GNUmakefile
+#	cp patch-files/GNUmakefile.tce  $(SOURCE)/src/tce/GNUmakefile
+#	cp patch-files/GNUmakefile.ccsd_t  $(SOURCE)/src/tce/ccsd_t/GNUmakefile
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE); \
 	  perl -pi -e "s!ROLLMPIHOME!$${MPI_HOME}!g" nwchemrc; \
-	  rm -f /tmp/nwchem-5.1.1; \
-	  ln -s `pwd` /tmp/nwchem-5.1.1; \
+	  rm -f /tmp/$(SOURCE); \
+	  ln -s `pwd` /tmp/$(SOURCE); \
 	  . nwchemrc; \
 	  cd src; \
 	  touch config/nwchem_config.h; \
