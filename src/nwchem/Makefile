@@ -103,8 +103,6 @@ endif
 build:
 	tar xvf $(SOURCE).tar.gz
 	cp patch-files/nwchemrc $(SOURCE)/
-#	cp patch-files/GNUmakefile.tce  $(SOURCE)/src/tce/GNUmakefile
-#	cp patch-files/GNUmakefile.ccsd_t  $(SOURCE)/src/tce/ccsd_t/GNUmakefile
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
