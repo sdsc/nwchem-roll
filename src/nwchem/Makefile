@@ -64,6 +64,8 @@ endif
 PKGROOT = /opt/nwchem
 SOURCE = nwchem-$(VERSION)
 REDHAT.ROOT = $(PWD)/../../
+MKLROOT=/opt/intel/Compiler/11.1/072/mkl/lib/em64t
+export BLASOPT="-L$(MKLROOT) -Wl,--start-group -lmkl_intel_ilp64 -lmkl_sequential -lmkl_core -Wl,--end-group -lpthread" 
 
 -include $(ROCKSROOT)/etc/Rules.mk
 
