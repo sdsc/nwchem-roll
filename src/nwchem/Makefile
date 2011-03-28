@@ -121,18 +121,18 @@ build:
 	)
 
 install::
- 	mkdir -p $(ROOT)/$(PKGROOT)
- 	mkdir -p $(ROOT)/$(PKGROOT)/bin
- 	mkdir -p $(ROOT)/$(PKGROOT)/data
+	mkdir -p $(ROOT)/$(PKGROOT)
+	mkdir -p $(ROOT)/$(PKGROOT)/bin
+	mkdir -p $(ROOT)/$(PKGROOT)/data
 	cp patch-files/dotnwchemrc $(ROOT)/$(PKGROOT)/.nwchemrc
 	perl -pi -e "s!NWCHEM_LIB!${NWCHEMLIB}!" $(ROOT)/$(PKGROOT)/.nwchemrc; \
- 	( \
- 	  cd $(SOURCE); \
- 	  cp bin/LINUX64/nwchem $(ROOT)/$(PKGROOT)/bin; \
- 	  cp -r src/basis/libraries $(ROOT)/$(PKGROOT)/data; \
- 	  cp -r src/data $(ROOT)/$(PKGROOT); \
- 	  cp -r src/nwpw/libraryps $(ROOT)/$(PKGROOT)/data \
- 	)
+	( \
+	  cd $(SOURCE); \
+	  cp bin/LINUX64/nwchem $(ROOT)/$(PKGROOT)/bin; \
+	  cp -r src/basis/libraries $(ROOT)/$(PKGROOT)/data; \
+	  cp -r src/data $(ROOT)/$(PKGROOT); \
+	  cp -r src/nwpw/libraryps $(ROOT)/$(PKGROOT)/data \
+	)
 
 clean::
 	rm -rf $(SOURCE)
