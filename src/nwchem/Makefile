@@ -68,6 +68,7 @@ MKLROOT=/opt/intel/Compiler/11.1/072/mkl/lib/em64t
 export BLASOPT="-L$(MKLROOT) -Wl,--start-group -lmkl_intel_ilp64 -lmkl_sequential -lmkl_core -Wl,--end-group -lpthread" 
 
 -include $(ROCKSROOT)/etc/Rules.mk
+NWCHEMLIB=$(ROOT)/$(PKGROOT)/data
 
 COMPILERSETUP = \
   if test -e /etc/profile.d/modules.sh; then \
@@ -120,17 +121,18 @@ build:
 	)
 
 install::
-	mkdir -p $(ROOT)/$(PKGROOT)
-	mkdir -p $(ROOT)/$(PKGROOT)/bin
-	mkdir -p $(ROOT)/$(PKGROOT)/data
+ 	mkdir -p $(ROOT)/$(PKGROOT)
+ 	mkdir -p $(ROOT)/$(PKGROOT)/bin
+ 	mkdir -p $(ROOT)/$(PKGROOT)/data
 	cp patch-files/dotnwchemrc $(ROOT)/$(PKGROOT)/.nwchemrc
-	( \
-	  cd $(SOURCE); \
-	  cp bin/LINUX64/nwchem $(ROOT)/$(PKGROOT)/bin; \
-	  cp -r src/basis/libraries $(ROOT)/$(PKGROOT)/data; \
-	  cp -r src/data $(ROOT)/$(PKGROOT); \
-	  cp -r src/nwpw/libraryps $(ROOT)/$(PKGROOT)/data \
-	)
+	perl -pi -e "s!NWCHEM_LIB!${NWCHEMLIB}!" $(ROOT)/$(PKGROOT)/.nwchemrc; \
+ 	( \
+ 	  cd $(SOURCE); \
+ 	  cp bin/LINUX64/nwchem $(ROOT)/$(PKGROOT)/bin; \
+ 	  cp -r src/basis/libraries $(ROOT)/$(PKGROOT)/data; \
+ 	  cp -r src/data $(ROOT)/$(PKGROOT); \
+ 	  cp -r src/nwpw/libraryps $(ROOT)/$(PKGROOT)/data \
+ 	)
 
 clean::
 	rm -rf $(SOURCE)
