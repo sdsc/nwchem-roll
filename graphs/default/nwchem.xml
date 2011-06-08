@@ -26,4 +26,15 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
   <tail>nwchem-modules-common</tail>
 </order>
 
+<edge from="base">
+  <to>nwchem-roll-test</to>
+</edge>
+<order head="base">
+  <tail>nwchem-roll-test</tail>
+</order>
+
+<order head="nwchem-common">
+  <tail>nwchem-modules-common</tail>
+</order>
+
 </graph>
