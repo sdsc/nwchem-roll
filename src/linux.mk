@@ -53,26 +53,7 @@
 # 
 # @Copyright@
 #
-# $Log$
-# Revision 1.4  2011/02/23 22:34:27  jhayes
-# Improvements to build process.
-#
-# Revision 1.3  2010/02/02 23:08:07  jpg
-#
-# intel/gnu roll files
-#
-# Revision 1.1  2009/07/29 03:21:52  jpg
-#
-#  nwchem Makefile linux.mk
-#
-# Revision 1.1  2009/05/17 19:56:22  jpg
-#
-#
-# Changed the build target in the Makefile so that one can pick a build target,and "actvte"
-# target(99.99% of the time it's *UNX). Next, I will add FORTRAN targets where the GAMESS build scripts allows for a choice
-#
-#
 
-SRCDIRS = `find . -type d -maxdepth 1 \
+SRCDIRS = `find . -maxdepth 1 -type d \
 	-not -name CVS \
 	-not -name .`

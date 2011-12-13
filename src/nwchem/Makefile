@@ -66,29 +66,30 @@ endif
 
 PKGROOT = /opt/nwchem
 SOURCE = nwchem-$(VERSION)
-REDHAT.ROOT = $(PWD)/../../
-MKLROOT=/opt/intel/Compiler/11.1/072/mkl/lib/em64t
-export BLASOPT="-L$(MKLROOT) -Wl,--start-group -lmkl_intel_ilp64 -lmkl_sequential -lmkl_core -Wl,--end-group -lpthread" 
+REDHAT.ROOT = $(CURDIR)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
-NWCHEMLIB=$(PKGROOT)/data
 
 COMPILERSETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
+    module load intel; \
+    export BLASOPT="-L$${MKL_ROOT} -Wl,--start-group -lmkl_intel_ilp64 \
+                    -lmkl_sequential -lmkl_core -Wl,--end-group -lpthread"; \
+    module unload intel; \
     module load $(ROLLCOMPILER); \
   fi
 
 ifeq ("$(ROLLNETWORK)", "eth")
-  MPI = $(ROLLMPI)
+  MPIMODULE = $(ROLLMPI)
 else
-  MPI = $(ROLLMPI)_$(ROLLNETWORK)
+  MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
 endif
 
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load $(MPI); \
+    module load $(MPIMODULE); \
   fi; \
   export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
   if test -z "$${MPI_HOME}"; then \
@@ -97,7 +98,6 @@ MPISETUP = \
   echo Using MPI from $${MPI_HOME}; \
   export PATH=$${PATH}:$${MPI_HOME}/bin; \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
-
 
 CC = gcc
 FCC = gfortran
@@ -124,19 +124,19 @@ build:
 	)
 
 install::
-	mkdir -p $(ROOT)/$(PKGROOT)
-	mkdir -p $(ROOT)/$(PKGROOT)/bin
-	mkdir -p $(ROOT)/$(PKGROOT)/data
+	mkdir -p -m755 $(ROOT)/$(PKGROOT)
+	mkdir -p -m755 $(ROOT)/$(PKGROOT)/bin
+	mkdir -p -m755 $(ROOT)/$(PKGROOT)/data
 	cp patch-files/dotnwchemrc $(ROOT)/$(PKGROOT)/.nwchemrc
-	perl -pi -e "s!NWCHEM_LIB!${NWCHEMLIB}!" $(ROOT)/$(PKGROOT)/.nwchemrc; \
+	perl -pi -e "s!NWCHEM_LIB!$(PKGROOT)/data!" $(ROOT)/$(PKGROOT)/.nwchemrc; \
 	( \
 	  cd $(SOURCE); \
 	  cp bin/LINUX64/nwchem $(ROOT)/$(PKGROOT)/bin; \
 	  cp -r src/basis/libraries $(ROOT)/$(PKGROOT)/data; \
 	  cp -r src/data $(ROOT)/$(PKGROOT); \
 	  cp -r src/nwpw/libraryps $(ROOT)/$(PKGROOT)/data; \
-          find $(ROOT)/$(PKGROOT)/data -perm 0750 -exec chmod 0755 {} \; ; \
-          find $(ROOT)/$(PKGROOT)/data -perm 0640 -exec chmod 0644 {} \; \
+	  find $(ROOT)/$(PKGROOT)/data -perm 0750 -exec chmod 0755 {} \; ; \
+	  find $(ROOT)/$(PKGROOT)/data -perm 0640 -exec chmod 0644 {} \; \
 	)
 
 clean::
