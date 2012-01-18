@@ -99,11 +99,22 @@ MPISETUP = \
   export PATH=$${PATH}:$${MPI_HOME}/bin; \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
 
+ROLL_openmpi_mx = \#
+ROLL_openmpi_ib = \#
+ROLL_mvapich2_ib = \#
+ROLL_vsmp_ib  = \#
+ROLL_mpich2_ib = \#
+ROLL_mpich2_mx = \#
+
 CC = gcc
 FCC = gfortran
 ifeq ("$(ROLLCOMPILER)", "intel")
   CC = icc
   FCC = ifort
+endif
+ifeq ("$(ROLLCOMPILER)", "pgi")
+  CC = pgcc
+  FCC = pgf90
 endif
 
 build:
@@ -113,7 +124,14 @@ build:
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE); \
+	  perl -pi -e "s!ROLL_$(ROLLMPI)_$(ROLLNETWORK) !!g" nwchemrc; \
 	  perl -pi -e "s!ROLLMPIHOME!$${MPI_HOME}!g" nwchemrc; \
+	  perl -pi -e "s!ROLL_openmpi_mx!$(ROLL_openmpi_mx)!g" nwchemrc; \
+	  perl -pi -e "s!ROLL_openmpi_ib!$(ROLL_openmpi_ib)!g" nwchemrc; \
+	  perl -pi -e "s!ROLL_mvapich2_ib!$(ROLL_mvapich2_ib)!g" nwchemrc; \
+	  perl -pi -e "s!ROLL_vsmp_ib!$(ROLL_vsmp_ib)!g" nwchemrc; \
+	  perl -pi -e "s!ROLL_mpich2_ib!$(ROLL_mpich2_ib)!g" nwchemrc; \
+	  perl -pi -e "s!ROLL_mpich2_mx!$(ROLL_mpich2_mx)!g" nwchemrc; \
 	  rm -f /tmp/$(SOURCE); \
 	  ln -s `pwd` /tmp/$(SOURCE); \
 	  . nwchemrc; \
