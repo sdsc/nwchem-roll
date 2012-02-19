@@ -74,7 +74,8 @@ COMPILERSETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
     module load intel; \
-    export BLASOPT="-L$${MKL_ROOT} -Wl,--start-group -lmkl_intel_ilp64 \
+    export MKLLIB=`find $${MKL_ROOT}/lib/* -maxdepth 0 | head -1`; \
+    export BLASOPT="-L$${MKLLIB} -Wl,--start-group -lmkl_intel_ilp64 \
                     -lmkl_sequential -lmkl_core -Wl,--end-group -lpthread"; \
     module unload intel; \
     module load $(ROLLCOMPILER); \
