@@ -3,6 +3,7 @@ export NWCHEM_TOP=/tmp/nwchem-6.1
 export NWCHEM_TARGET=LINUX64
 export USE_MPI=y
 export USE_MPIF=y
+export USE_MPIF4=y
 export MPI_HOME=ROLLMPIHOME
 export MPI_LIB=${MPI_HOME}/lib
 export MPI_INCLUDE=${MPI_HOME}/include
