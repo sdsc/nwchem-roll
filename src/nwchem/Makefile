@@ -154,6 +154,7 @@ install::
 	  cp -r src/basis/libraries $(ROOT)/$(PKGROOT)/data; \
 	  cp -r src/data $(ROOT)/$(PKGROOT); \
 	  cp -r src/nwpw/libraryps $(ROOT)/$(PKGROOT)/data; \
+          cp -r src/tools/global/testing/ipcreset $(ROOT)/$(PKGROOT)/bin; \
 	  find $(ROOT)/$(PKGROOT)/data -perm 0750 -exec chmod 0755 {} \; ; \
 	  find $(ROOT)/$(PKGROOT)/data -perm 0640 -exec chmod 0644 {} \; \
 	)
