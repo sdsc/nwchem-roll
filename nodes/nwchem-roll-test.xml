@@ -62,35 +62,20 @@ if($appliance =~ /$installedOnAppliancesPattern/) {
 }
 SKIP: {
 
-  skip 'nwchem not installed', 3 if ! $isInstalled;
+  skip 'nwchem not installed', 4 if ! $isInstalled;
   if(! -f "$ENV{HOME}/.nwchemrc") {
     `ln -s /opt/nwchem/.nwchemrc $ENV{HOME}`;
   }
   $output = `mpirun -np 4 /opt/nwchem/bin/nwchem $TESTFILE.nwchem 2>&1`;
   ok($output =~ /Vector\s+14\s+Occ=2\..*E=-4\..*Symmetry=eu/, 'nwchem runs');
 
-}
-
-# nwchem-modules-common
-SKIP: {
-
-  skip 'nwchem not installed', 1 if ! $isInstalled;
-  my $modulesInstalled = -f '/etc/profile.d/modules.sh';
-  if($modulesInstalled) {
-    ok(! -f '/etc/profile.d/nwchem.csh' &&
-       ! -f '/etc/profile.d/nwchem.sh', 'nwchem profile.d removed');
-    like($ENV{MODULEPATH}, qr#/opt/modulefiles/applications#,
-         'MODULEPATH set for applications');
-    `/bin/ls /opt/modulefiles/applications/nwchem/[0-9]* 2>&1`;
-    ok($? == 0, 'nwchem module installed');
-    `/bin/ls /opt/modulefiles/applications/nwchem/.version.[0-9]* 2>&1`;
-    ok($? == 0, 'nwchem version module installed');
-    ok(-l '/opt/modulefiles/applications/nwchem/.version',
-       'nwchem version module link created');
-  } else {
-    ok(-f '/etc/profile.d/nwchem.csh' && -f '/etc/profile.d/nwchem.sh',
-       'nwchem profile.d installed');
-  }
+  skip 'modules not installed', 3 if ! -f '/etc/profile.d/modules.sh';
+  `/bin/ls /opt/modulefiles/applications/nwchem/[0-9]* 2>&1`;
+  ok($? == 0, 'nwchem module installed');
+  `/bin/ls /opt/modulefiles/applications/nwchem/.version.[0-9]* 2>&1`;
+  ok($? == 0, 'nwchem version module installed');
+  ok(-l '/opt/modulefiles/applications/nwchem/.version',
+     'nwchem version module link created');
 
 }
 
