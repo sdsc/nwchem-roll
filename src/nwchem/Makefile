@@ -107,18 +107,16 @@ ROLL_vsmp_ib  = \#
 ROLL_mpich2_ib = \#
 ROLL_mpich2_mx = \#
 
-#CC = gcc
-#FCC = gfortran
-#ifeq ("$(ROLLCOMPILER)", "intel")
-#  CC = icc
-#  FCC = ifort
-#endif
-#ifeq ("$(ROLLCOMPILER)", "pgi")
-#  CC = pgcc
-#  FCC = pgf90
-#endif
-CC = mpicc
-FCC = mpif77
+CC = gcc
+FCC = gfortran
+ifeq ("$(ROLLCOMPILER)", "intel")
+  CC = icc
+  FCC = ifort
+endif
+ifeq ("$(ROLLCOMPILER)", "pgi")
+  CC = pgcc
+  FCC = pgf90
+endif
 
 build:
 	tar xvf $(SOURCE).tar.gz
@@ -135,10 +133,10 @@ build:
 	  perl -pi -e "s!ROLL_vsmp_ib!$(ROLL_vsmp_ib)!g" nwchemrc; \
 	  perl -pi -e "s!ROLL_mpich2_ib!$(ROLL_mpich2_ib)!g" nwchemrc; \
 	  perl -pi -e "s!ROLL_mpich2_mx!$(ROLL_mpich2_mx)!g" nwchemrc; \
+	  export NWCHEM_TOP=/tmp/$(SOURCE); \
+	  . ./nwchemrc; \
 	  rm -f /tmp/$(SOURCE); \
 	  ln -s `pwd` /tmp/$(SOURCE); \
-	  export NWCHEM_TOP=/tmp/$(SOURCE); \
-	  . nwchemrc; \
 	  cd src; \
 	  touch config/nwchem_config.h; \
 	  make nwchem_config NWCHEM_MODULES=all; \
