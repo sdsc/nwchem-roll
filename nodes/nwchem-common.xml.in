@@ -14,5 +14,6 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 
 <package>nwchem_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
 <package>nwchem-modules</package>
+<package>nwchem-roll-test</package>
 
 </kickstart>
