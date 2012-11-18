@@ -121,6 +121,7 @@ endif
 build:
 	tar xvf $(SOURCE).tar.gz
 	cp patch-files/nwchemrc $(SOURCE)/
+	cp patch-files/makecoms.h $(SOURCE)/src/tools/armci/config
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
