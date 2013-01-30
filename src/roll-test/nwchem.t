@@ -33,6 +33,17 @@ task scf
 END
 close(OUT);
 
+open(OUT, ">$TESTFILE.sh");
+print OUT <<END;
+. /etc/profile.d/modules.sh
+module load ROLLCOMPILER ROLLMPI_ROLLNETWORK
+if test ! -e \$HOME/.nwchemrc; then
+  ln -s /opt/nwchem/.nwchemrc \$HOME/
+fi
+mpirun -np 4 /opt/nwchem/bin/nwchem $TESTFILE.nwchem
+END
+close(OUT);
+
 # nwchem-common.xml
 if($appliance =~ /$installedOnAppliancesPattern/) {
   ok($isInstalled, 'nwchem installed');
@@ -42,10 +53,7 @@ if($appliance =~ /$installedOnAppliancesPattern/) {
 SKIP: {
 
   skip 'nwchem not installed', 4 if ! $isInstalled;
-  if(! -f "$ENV{HOME}/.nwchemrc") {
-    `ln -s /opt/nwchem/.nwchemrc $ENV{HOME}`;
-  }
-  $output = `mpirun -np 4 /opt/nwchem/bin/nwchem $TESTFILE.nwchem 2>&1`;
+  $output = `bash $TESTFILE.sh 2>&1`;
   ok($output =~ /Vector\s+14\s+Occ=2\..*E=-4\..*Symmetry=eu/, 'nwchem runs');
 
   skip 'modules not installed', 3 if ! -f '/etc/profile.d/modules.sh';
