@@ -142,7 +142,7 @@ build:
 	  cd src; \
 	  touch config/nwchem_config.h; \
 	  make nwchem_config NWCHEM_MODULES=all; \
-	  make FC=$(FCC) CC=$(CC) \
+	  make -j 16 FC=$(FCC) CC=$(CC) \
 	)
 
 install::
