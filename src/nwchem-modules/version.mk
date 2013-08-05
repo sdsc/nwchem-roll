@@ -1,3 +1,3 @@
 NAME    = nwchem-modules
-VERSION	= 6.1.1
+VERSION	= 6.3
 RELEASE	= 1
