@@ -80,8 +80,7 @@ COMPILERSETUP = \
     export BLASOPT="-L$${MKLLIB} -Wl,--start-group -lmkl_intel_ilp64 \
                     -lmkl_sequential -lmkl_core -Wl,--end-group -lpthread"; \
     module unload intel; \
-    latestModule=`module avail 2>&1 | grep -o '$(ROLLCOMPILER)/[^ (]*' | sed 's/$(ROLLCOMPILER).//' | sort -t. -k1,1n -k2,2n -k3,3n | tail -1`; \
-    module load $(ROLLCOMPILER)/$${latestModule}; \
+    module load $(ROLLCOMPILER); \
   fi
 
 ifeq ("$(ROLLNETWORK)", "eth")
