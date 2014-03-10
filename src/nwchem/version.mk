@@ -2,6 +2,7 @@ NAME               = nwchem_$(ROLLCOMPILER)_$(ROLLMPI)_$(ROLLNETWORK)
 VERSION            = 6.3
 RELEASE            = 1
 PKGROOT            = /opt/nwchem
+RPM.EXTRAS         = AutoReq:No
 
 SRC_SUBDIR         = nwchem
 
