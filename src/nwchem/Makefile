@@ -56,32 +56,36 @@
 #
 # $Log$
 
-ifndef ROLLCOMPILER
-  ROLLCOMPILER = gnu
-endif
-ifndef ROLLNETWORK
-  ROLLNETWORK = eth
-endif
-ifndef ROLLMPI
-  ROLLMPI = openmpi
-endif
-
 REDHAT.ROOT = $(CURDIR)/../../
+PKGROOT = /opt/nwchem
 
 -include $(ROCKSROOT)/etc/Rules.mk
 include Rules.mk
 include pull.mk
 
-COMPILERSETUP = \
+CC = gcc
+FC = gfortran
+ifeq ("$(ROLLCOMPILER)", "intel")
+  CC = icc
+  FC = ifort
+else ifeq ("$(ROLLCOMPILER)", "pgi")
+  CC = pgcc
+  FC = pgf90
+endif
+
+COMPILERSETUP =  \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load intel; \
-    export MKLLIB=`find $${MKL_ROOT}/lib/* -maxdepth 0 | head -1`; \
-    export BLASOPT="-L$${MKLLIB} -Wl,--start-group -lmkl_intel_ilp64 \
-                    -lmkl_sequential -lmkl_core -Wl,--end-group -lpthread"; \
-    module unload intel; \
-    module load $(ROLLCOMPILER); \
-  fi
+    module load $(ROLLCOMPILER) || true; \
+    module load mkl || true; \
+  fi; \
+  echo === Compiler and version ===; \
+  $(CC) --version; \
+  echo === MKL_ROOT ===; \
+  echo $${MKL_ROOT}; \
+  export MKLLIB=`find $${MKL_ROOT}/lib/* -maxdepth 0 | head -1`; \
+  export BLASOPT="-L$${MKLLIB} -Wl,--start-group -lmkl_intel_ilp64 \
+                  -lmkl_sequential -lmkl_core -Wl,--end-group -lpthread"
 
 ifeq ("$(ROLLNETWORK)", "eth")
   MPIMODULE = $(ROLLMPI)
@@ -92,64 +96,59 @@ endif
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load $(MPIMODULE); \
+    module load $(MPIMODULE) || true; \
   fi; \
-  export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
-  if test -z "$${MPI_HOME}"; then \
-    export MPI_HOME=/opt/$(ROLLMPI); \
+  if test -z "$${MPIHOME}"; then \
+    export MPIHOME=/opt/$(ROLLMPI); \
   fi; \
-  echo Using MPI from $${MPI_HOME}; \
-  export PATH=$${PATH}:$${MPI_HOME}/bin; \
-  export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
+  echo === MPIHOME ===; \
+  echo $${MPIHOME}
 
-ROLL_openmpi_mx = \#
-ROLL_openmpi_ib = \#
-ROLL_mvapich2_ib = \#
-ROLL_vsmp_ib  = \#
-ROLL_mpich2_ib = \#
-ROLL_mpich2_mx = \#
-
-CC = gcc
-FCC = gfortran
-ifeq ("$(ROLLCOMPILER)", "intel")
-  CC = icc
-  FCC = ifort
+ifeq ("$(ROLLNETWORK)", "mx")
+  ARMCI_NETWORK = GM
+else ifeq ("$(ROLLNETWORK)", "ib")
+  ARMCI_NETWORK = OPENIB
 endif
-ifeq ("$(ROLLCOMPILER)", "pgi")
-  CC = pgcc
-  FCC = pgf90
+
+ifeq ("$(MPIMODULE)", "openmpi_mx")
+  MPI_LINK = -lmpi_f77 -lmpi -L/opt/mx/lib -lmyriexpress -lrt -lnsl -lutil -ldl -lm -lrt -lnsl -lutil
+else ifeq ("$(MPIMODULE)", "openmpi_ib")
+  MPI_LINK = -lmpi_f77 -lmpi -lrdmacm -libverbs -lnsl -lutil -ldl -lnsl -lutil
+else ifeq ("$(MPIMODULE)", "mvapich2_ib")
+  MPI_LINK = -L/usr/lib64 -Wl,-rpath,${MPI_LIB} -lmpich -lopa -lmpl -lpthread -llimic2 -lrdmacm -libverbs -libumad -ldl -lrt
+else ifeq ("$(MPIMODULE)", "vsmp_ib")
+  MPI_LINK = -Wl,-rpath -Wl,${MPI_LIB} -lmpich -lopa -lmpl -lrt -lpthread
 endif
 
 build: $(SRC_DIRS)
-	cp patch-files/nwchemrc $(SOURCE_DIR)/
-	cp patch-files/makecoms.h $(SOURCE_DIR)/src/tools/armci/config
+	perl -pi -e 's/-m(arch|tune)=native//g' $(SOURCE_DIR)/src/config/makefile.h
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE_DIR); \
-	  perl -pi -e "s!ROLL_$(ROLLMPI)_$(ROLLNETWORK) !!g" nwchemrc; \
-	  perl -pi -e "s!ROLLMPIHOME!$${MPI_HOME}!g" nwchemrc; \
-	  perl -pi -e "s!ROLL_openmpi_mx!$(ROLL_openmpi_mx)!g" nwchemrc; \
-	  perl -pi -e "s!ROLL_openmpi_ib!$(ROLL_openmpi_ib)!g" nwchemrc; \
-	  perl -pi -e "s!ROLL_mvapich2_ib!$(ROLL_mvapich2_ib)!g" nwchemrc; \
-	  perl -pi -e "s!ROLL_vsmp_ib!$(ROLL_vsmp_ib)!g" nwchemrc; \
-	  perl -pi -e "s!ROLL_mpich2_ib!$(ROLL_mpich2_ib)!g" nwchemrc; \
-	  perl -pi -e "s!ROLL_mpich2_mx!$(ROLL_mpich2_mx)!g" nwchemrc; \
+	  export LARGE_FILES=TRUE; \
+	  export NWCHEM_TARGET=LINUX64; \
+	  export ARMCI_NETWORK=$(ARMCI_NETWORK); \
+	  export USE_MPI=y; \
+	  export USE_MPIF=y; \
+	  export USE_MPIF4=y; \
+	  export LIBMPI="$(MPI_LINK)"; \
+	  export MPI_LIB=$${MPIHOME}/lib; \
+	  export MPI_INCLUDE=$${MPIHOME}/include; \
 	  export NWCHEM_TOP=/tmp/$(SOURCE_DIR); \
-	  . ./nwchemrc; \
 	  rm -f /tmp/$(SOURCE_DIR); \
 	  ln -s `pwd` /tmp/$(SOURCE_DIR); \
 	  cd src; \
 	  touch config/nwchem_config.h; \
 	  make nwchem_config NWCHEM_MODULES=all; \
-	  make -j 16 FC=$(FCC) CC=$(CC) \
+	  make -j 16 FC=$(FC) CC=$(CC) \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
-	mkdir -p -m755 $(ROOT)/$(PKGROOT)
-	mkdir -p -m755 $(ROOT)/$(PKGROOT)/bin
-	mkdir -p -m755 $(ROOT)/$(PKGROOT)/data
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/bin
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/data
 	cp patch-files/dotnwchemrc $(ROOT)/$(PKGROOT)/.nwchemrc
 	perl -pi -e "s!NWCHEM_LIB!$(PKGROOT)/data!" $(ROOT)/$(PKGROOT)/.nwchemrc; \
 	( \
@@ -158,7 +157,7 @@ install::
 	  cp -r src/basis/libraries $(ROOT)/$(PKGROOT)/data; \
 	  cp -r src/data $(ROOT)/$(PKGROOT); \
 	  cp -r src/nwpw/libraryps $(ROOT)/$(PKGROOT)/data; \
-          cp -r src/tools/global/testing/ipcreset $(ROOT)/$(PKGROOT)/bin; \
+	  cp -r src/tools/global/testing/ipcreset $(ROOT)/$(PKGROOT)/bin; \
 	  find $(ROOT)/$(PKGROOT)/data -perm 0750 -exec chmod 0755 {} \; ; \
 	  find $(ROOT)/$(PKGROOT)/data -perm 0640 -exec chmod 0644 {} \; \
 	)
