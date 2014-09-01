@@ -55,7 +55,7 @@ for openmpi ethernet.  To build for a different configuration, use the
 `ROLLCOMPILER`, `ROLLMPI` and `ROLLNETWORK` make variables, e.g.,
 
 ```shell
-make ROLLCOMPILER=intel ROLLMPI=mpich2 ROLLNETWORK=mx 
+make ROLLCOMPILER=intel ROLLMPI=mvapich2 ROLLNETWORK=ib 
 ```
 
 The build process currently supports one or more of the values "intel", "pgi",
@@ -63,7 +63,13 @@ and "gnu" for the `ROLLCOMPILER` variable, defaulting to "gnu".  It supports
 `ROLLMPI` values "openmpi", "mpich2", and "mvapich2", defaulting to "openmpi".
 It uses any `ROLLNETWORK` variable value(s) to load appropriate mpi modules,
 assuming that there are modules named `$(ROLLMPI)_$(ROLLNETWORK)` available
-(e.g., `openmpi_ib`, `mpich2_mx`, etc.).
+(e.g., `openmpi_ib`, `mvapich2_mx`, etc.).  The build process uses the
+ROLLCOMPILER value to load an environment module, so you can also use it to
+specify a particular compiler version, e.g.,
+
+```shell
+% make ROLLCOMPILER=gnu/4.8.1 ROLLMPI=mvapich2 ROLLNETWORK=ib
+```
 
 If the `ROLLCOMPILER`, `ROLLNETWORK` and/or `ROLLMPI` variables are specified,
 their values are incorporated into the names of the produced roll and rpms, e.g.,
@@ -103,11 +109,5 @@ run the test scripts execute the following command(s):
 
 ```shell
 % /root/rolltests/nwchem.t 
-ok 1 - nwchem is installed
-ok 2 - nwchem test run
-ok 3 - nwchem module installed
-ok 4 - nwchem version module installed
-ok 5 - nwchem version module link created
-1..5
 ```
 

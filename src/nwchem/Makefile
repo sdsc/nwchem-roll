@@ -57,7 +57,6 @@
 # $Log$
 
 REDHAT.ROOT = $(CURDIR)/../../
-PKGROOT = /opt/nwchem
 
 -include $(ROCKSROOT)/etc/Rules.mk
 include Rules.mk

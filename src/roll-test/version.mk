@@ -1,4 +1,5 @@
-NAME	= nwchem-roll-test
-VERSION	= 1
-RELEASE	= 0
-RPM.EXTRAS         = AutoReq:No
+NAME       = nwchem-roll-test
+VERSION    = 1
+RELEASE    = 0
+
+RPM.EXTRAS = AutoReq:No
