@@ -35,8 +35,10 @@ close(OUT);
 
 open(OUT, ">$TESTFILE.sh");
 print OUT <<END;
-. /etc/profile.d/modules.sh
-module load ROLLCOMPILER ROLLMPI_ROLLNETWORK mkl
+if test -f /etc/profile.d/modules.sh; then
+  . /etc/profile.d/modules.sh
+  module load nwchem
+fi
 if test ! -e \$HOME/.nwchemrc; then
   ln -s /opt/nwchem/.nwchemrc \$HOME/
 fi
