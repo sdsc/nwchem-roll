@@ -13,7 +13,7 @@ endif
 
 NAME           = nwchem_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
 VERSION        = 6.3
-RELEASE        = 2
+RELEASE        = 3
 PKGROOT        = /opt/nwchem
 
 SRC_SUBDIR     = nwchem

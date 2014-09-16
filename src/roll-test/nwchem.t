@@ -35,10 +35,7 @@ close(OUT);
 
 open(OUT, ">$TESTFILE.sh");
 print OUT <<END;
-if test -f /etc/profile.d/modules.sh; then
-  . /etc/profile.d/modules.sh
-  module load nwchem
-fi
+module load nwchem
 if test ! -e \$HOME/.nwchemrc; then
   ln -s /opt/nwchem/.nwchemrc \$HOME/
 fi
@@ -58,7 +55,6 @@ SKIP: {
   $output = `bash $TESTFILE.sh 2>&1`;
   ok($output =~ /Vector\s+14\s+Occ=2\..*E=-4\..*Symmetry=eu/, 'nwchem runs');
 
-  skip 'modules not installed', 3 if ! -f '/etc/profile.d/modules.sh';
   `/bin/ls /opt/modulefiles/applications/nwchem/[0-9]* 2>&1`;
   ok($? == 0, 'nwchem module installed');
   `/bin/ls /opt/modulefiles/applications/nwchem/.version.[0-9]* 2>&1`;

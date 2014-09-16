@@ -73,18 +73,15 @@ else ifeq ("$(ROLLCOMPILER)", "pgi")
 endif
 
 COMPILERSETUP =  \
-  if test -e /etc/profile.d/modules.sh; then \
-    . /etc/profile.d/modules.sh; \
-    module load $(ROLLCOMPILER) || true; \
-    module load mkl || true; \
-  fi; \
+  module load $(ROLLCOMPILER) || true; \
   echo === Compiler and version ===; \
-  $(CC) --version; \
+  $(CC) --version
+
+MKLSETUP = \
+  module load mkl || true; \
   echo === MKL_ROOT ===; \
   echo $${MKL_ROOT}; \
-  export MKLLIB=`find $${MKL_ROOT}/lib/* -maxdepth 0 | head -1`; \
-  export BLASOPT="-L$${MKLLIB} -Wl,--start-group -lmkl_intel_ilp64 \
-                  -lmkl_sequential -lmkl_core -Wl,--end-group -lpthread"
+  export MKLLIB=`find $${MKL_ROOT}/lib/* -maxdepth 0 | head -1`
 
 ifeq ("$(ROLLNETWORK)", "eth")
   MPIMODULE = $(ROLLMPI)
@@ -93,13 +90,7 @@ else
 endif
 
 MPISETUP = \
-  if test -e /etc/profile.d/modules.sh; then \
-    . /etc/profile.d/modules.sh; \
-    module load $(MPIMODULE) || true; \
-  fi; \
-  if test -z "$${MPIHOME}"; then \
-    export MPIHOME=/opt/$(ROLLMPI); \
-  fi; \
+  module load $(MPIMODULE) || true; \
   echo === MPIHOME ===; \
   echo $${MPIHOME}
 
@@ -123,6 +114,7 @@ build: $(SRC_DIRS)
 	perl -pi -e 's/-m(arch|tune)=native//g' $(SOURCE_DIR)/src/config/makefile.h
 	( \
 	  $(COMPILERSETUP); \
+	  $(MKLSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE_DIR); \
 	  export LARGE_FILES=TRUE; \
@@ -135,6 +127,8 @@ build: $(SRC_DIRS)
 	  export MPI_LIB=$${MPIHOME}/lib; \
 	  export MPI_INCLUDE=$${MPIHOME}/include; \
 	  export NWCHEM_TOP=/tmp/$(SOURCE_DIR); \
+	  export BLASOPT="-L$${MKLLIB} -Wl,--start-group -lmkl_intel_ilp64 \
+	                  -lmkl_sequential -lmkl_core -Wl,--end-group -lpthread"; \
 	  rm -f /tmp/$(SOURCE_DIR); \
 	  ln -s `pwd` /tmp/$(SOURCE_DIR); \
 	  cd src; \
