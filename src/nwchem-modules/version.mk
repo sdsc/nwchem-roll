@@ -1,5 +1,9 @@
-NAME       = nwchem-modules
-VERSION    = 6.3
-RELEASE    = 1
+NAME        = nwchem-modules
+RELEASE     = 2
+PKGROOT     = /opt/modulefiles/applications/nwchem
 
-RPM.EXTRAS = AutoReq:No
+VERSION_SRC = $(REDHAT.ROOT)/src/nwchem/version.mk
+VERSION_INC = version.inc
+include $(VERSION_INC)
+
+RPM.EXTRAS  = AutoReq:No
