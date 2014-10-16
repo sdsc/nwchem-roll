@@ -12,15 +12,15 @@ ifndef ROLLNETWORK
 endif
 
 NAME           = nwchem_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
-VERSION        = 6.3
-RELEASE        = 3
+VERSION        = 6.5
+RELEASE        = 0
 PKGROOT        = /opt/nwchem
 
 SRC_SUBDIR     = nwchem
 
-SOURCE_NAME    = nwchem
+SOURCE_NAME    = Nwchem
 SOURCE_SUFFIX  = tar.gz
-SOURCE_VERSION = $(VERSION)
+SOURCE_VERSION = 6.5.revision26243-src.2014-09-10
 SOURCE_PKG     = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
 SOURCE_DIR     = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
 
