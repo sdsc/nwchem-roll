@@ -83,30 +83,19 @@ MKLSETUP = \
   echo $${MKL_ROOT}; \
   export MKLLIB=`find $${MKL_ROOT}/lib/* -maxdepth 0 | head -1`
 
-ifeq ("$(ROLLNETWORK)", "eth")
-  MPIMODULE = $(ROLLMPI)
-else
-  MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
-endif
-
 MPISETUP = \
-  module load $(MPIMODULE) || true; \
+  module load $(ROLLMPI) || true; \
   echo === MPIHOME ===; \
   echo $${MPIHOME}
 
-ifeq ("$(ROLLNETWORK)", "mx")
-  ARMCI_NETWORK = GM
-else ifeq ("$(ROLLNETWORK)", "ib")
+ifeq ("$(MPINAME)", "openmpi_ib")
   ARMCI_NETWORK = OPENIB
-endif
-
-ifeq ("$(MPIMODULE)", "openmpi_mx")
-  MPI_LINK = -lmpi_f77 -lmpi -L/opt/mx/lib -lmyriexpress -lrt -lnsl -lutil -ldl -lm -lrt -lnsl -lutil
-else ifeq ("$(MPIMODULE)", "openmpi_ib")
   MPI_LINK = -lmpi_f77 -lmpi -lrdmacm -libverbs -lnsl -lutil -ldl -lnsl -lutil
-else ifeq ("$(MPIMODULE)", "mvapich2_ib")
+else ifeq ("$(MPINAME)", "mvapich2_ib")
+  ARMCI_NETWORK = OPENIB
   MPI_LINK = -L/usr/lib64 -Wl,-rpath,${MPI_LIB} -lmpich -lopa -lmpl -lpthread -llimic2 -lrdmacm -libverbs -libumad -ldl -lrt
-else ifeq ("$(MPIMODULE)", "vsmp_ib")
+else ifeq ("$(MPINAME)", "vsmp_ib")
+  ARMCI_NETWORK = OPENIB
   MPI_LINK = -Wl,-rpath -Wl,${MPI_LIB} -lmpich -lopa -lmpl -lrt -lpthread
 endif
 

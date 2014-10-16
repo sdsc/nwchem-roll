@@ -6,14 +6,11 @@ COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
 ifndef ROLLMPI
   ROLLMPI = openmpi
 endif
+MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
-ifndef ROLLNETWORK
-  ROLLNETWORK = eth
-endif
-
-NAME           = nwchem_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
+NAME           = nwchem_$(COMPILERNAME)_$(MPINAME)
 VERSION        = 6.5
-RELEASE        = 0
+RELEASE        = 1
 PKGROOT        = /opt/nwchem
 
 SRC_SUBDIR     = nwchem
