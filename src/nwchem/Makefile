@@ -88,17 +88,6 @@ MPISETUP = \
   echo === MPIHOME ===; \
   echo $${MPIHOME}
 
-ifeq ("$(MPINAME)", "openmpi_ib")
-  ARMCI_NETWORK = OPENIB
-  MPI_LINK = -lmpi_f77 -lmpi -lrdmacm -libverbs -lnsl -lutil -ldl -lnsl -lutil
-else ifeq ("$(MPINAME)", "mvapich2_ib")
-  ARMCI_NETWORK = OPENIB
-  MPI_LINK = -L/usr/lib64 -Wl,-rpath,${MPI_LIB} -lmpich -lopa -lmpl -lpthread -llimic2 -lrdmacm -libverbs -libumad -ldl -lrt
-else ifeq ("$(MPINAME)", "vsmp_ib")
-  ARMCI_NETWORK = OPENIB
-  MPI_LINK = -Wl,-rpath -Wl,${MPI_LIB} -lmpich -lopa -lmpl -lrt -lpthread
-endif
-
 build: $(SRC_DIRS)
 	perl -pi -e 's/-m(arch|tune)=native//g' $(SOURCE_DIR)/src/config/makefile.h
 	( \
@@ -108,11 +97,10 @@ build: $(SRC_DIRS)
 	  cd $(SOURCE_DIR); \
 	  export LARGE_FILES=TRUE; \
 	  export NWCHEM_TARGET=LINUX64; \
-	  export ARMCI_NETWORK=$(ARMCI_NETWORK); \
+	  export ARMCI_NETWORK=OPENIB; \
 	  export USE_MPI=y; \
 	  export USE_MPIF=y; \
 	  export USE_MPIF4=y; \
-	  export LIBMPI="$(MPI_LINK)"; \
 	  export MPI_LIB=$${MPIHOME}/lib; \
 	  export MPI_INCLUDE=$${MPIHOME}/include; \
 	  export NWCHEM_TOP=/tmp/$(SOURCE_DIR); \
@@ -123,7 +111,7 @@ build: $(SRC_DIRS)
 	  cd src; \
 	  touch config/nwchem_config.h; \
 	  make nwchem_config NWCHEM_MODULES=all; \
-	  make -j 16 FC=$(FC) CC=$(CC) \
+	  make -j 16 FC=mpif90 CC=mpicc \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
