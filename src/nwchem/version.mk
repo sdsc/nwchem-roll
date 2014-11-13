@@ -8,9 +8,9 @@ ifndef ROLLMPI
 endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
-NAME           = nwchem_$(COMPILERNAME)_$(MPINAME)
+NAME           = sdsc-nwchem
 VERSION        = 6.5
-RELEASE        = 1
+RELEASE        = 2
 PKGROOT        = /opt/nwchem
 
 SRC_SUBDIR     = nwchem

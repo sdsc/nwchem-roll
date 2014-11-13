@@ -12,8 +12,8 @@ Copyright (c) 2000 - 2014 The Regents of the University of California.
 All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 </copyright>
 
-<package>nwchem_COMPILERNAME_MPINAME</package>
-<package>nwchem-modules</package>
-<package>nwchem-roll-test</package>
+<package>sdsc-nwchem</package>
+<package>sdsc-nwchem-modules</package>
+<package>sdsc-nwchem-roll-test</package>
 
 </kickstart>

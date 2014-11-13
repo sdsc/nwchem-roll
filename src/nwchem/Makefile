@@ -60,40 +60,35 @@ REDHAT.ROOT = $(CURDIR)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 include Rules.mk
-include pull.mk
+include $(SDSCDEVEL)/Pull.mk
+include $(SDSCDEVEL)/Rules.mk
 
-CC = gcc
-FC = gfortran
-ifeq ("$(ROLLCOMPILER)", "intel")
-  CC = icc
-  FC = ifort
-else ifeq ("$(ROLLCOMPILER)", "pgi")
-  CC = pgcc
-  FC = pgf90
-endif
+LICENSE_FILES = $(SOURCE_DIR)/LICENSE.TXT
 
-COMPILERSETUP =  \
-  module load $(ROLLCOMPILER) || true; \
-  echo === Compiler and version ===; \
-  $(CC) --version
+$(NAME).spec: DESCRIPTION LICENSE
 
-MKLSETUP = \
-  module load mkl || true; \
-  echo === MKL_ROOT ===; \
-  echo $${MKL_ROOT}; \
-  export MKLLIB=`find $${MKL_ROOT}/lib/* -maxdepth 0 | head -1`
+DESCRIPTION:
+	$(MODULE_LOAD_CC); \
+	( \
+	  $(DESCRIBE_PKG); \
+	  $(DESCRIBE_CC); \
+	  $(DESCRIBE_MKL); \
+	  $(DESCRIBE_MPI) \
+	) > $@
 
-MPISETUP = \
-  module load $(ROLLMPI) || true; \
-  echo === MPIHOME ===; \
-  echo $${MPIHOME}
+LICENSE: $(SRC_DIRS)
+	if ! grep -qF "Educational Community License (ECL) 2.0" $(LICENSE_FILES); then \
+	  exit 2; \
+	fi
+	echo ECL > $@
 
 build: $(SRC_DIRS)
 	perl -pi -e 's/-m(arch|tune)=native//g' $(SOURCE_DIR)/src/config/makefile.h
 	( \
-	  $(COMPILERSETUP); \
-	  $(MKLSETUP); \
-	  $(MPISETUP); \
+	  $(MODULE_LOAD_CC); \
+	  $(MODULE_LOAD_MKL); \
+	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
+	  $(MODULE_LOAD_MPI); \
 	  cd $(SOURCE_DIR); \
 	  export LARGE_FILES=TRUE; \
 	  export NWCHEM_TARGET=LINUX64; \
@@ -116,9 +111,7 @@ build: $(SRC_DIRS)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
-	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
-	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/bin
-	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/data
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT) $(ROOT)/$(PKGROOT)/{bin,data}
 	cp patch-files/dotnwchemrc $(ROOT)/$(PKGROOT)/.nwchemrc
 	perl -pi -e "s!NWCHEM_LIB!$(PKGROOT)/data!" $(ROOT)/$(PKGROOT)/.nwchemrc; \
 	( \
@@ -131,7 +124,8 @@ install::
 	  find $(ROOT)/$(PKGROOT)/data -perm 0750 -exec chmod 0755 {} \; ; \
 	  find $(ROOT)/$(PKGROOT)/data -perm 0640 -exec chmod 0644 {} \; \
 	)
+	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) build complete :::"
 
 clean::
-	rm -rf $(SOURCE_DIR)
+	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE
