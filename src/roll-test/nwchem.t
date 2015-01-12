@@ -14,6 +14,13 @@ my $output;
 
 my $TESTFILE = 'tmpnwchem';
 
+if ($ENV{"USER"} eq "root") {
+  print STDERR "Aborting\n";
+  print STDERR "Due to openmpi restictions, this test reports spurious errors when run by root\n";
+  print STDERR "Rerun as a non-root user\n";
+  exit(1);
+}
+
 #
 # Example from http://www.psc.edu/general/software/packages/nwchem/examples
 #
