@@ -1,4 +1,4 @@
 #%Module1.0
 setenv NWCHEMHOME /opt/nwchem
 prepend-path PATH /opt/nwchem/bin
-module load ROLLCOMPILER mkl
+module load ROLLCOMPILER ROLLMPI mkl
