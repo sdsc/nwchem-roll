@@ -60,8 +60,7 @@ SKIP: {
 
   skip 'nwchem not installed', 4 if ! $isInstalled;
   $output = `bash $TESTFILE.sh 2>&1`;
-  ok($output =~ /Vector\s+14\s+Occ=2\..*E=-4\..*Symmetry=eu/, 'nwchem runs');
-
+  ok($output =~ /Total SCF energy =   -794.820927/, 'nwchem runs');
   `/bin/ls /opt/modulefiles/applications/nwchem/[0-9]* 2>&1`;
   ok($? == 0, 'nwchem module installed');
   `/bin/ls /opt/modulefiles/applications/nwchem/.version.[0-9]* 2>&1`;
