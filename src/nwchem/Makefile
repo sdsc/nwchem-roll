@@ -84,6 +84,7 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
+          MPI_LINK=`mpif90 -show|sed 's/.*-L/-L/'`; \
 	  $(MODULE_LOAD_MPI); \
 	  cd $(SOURCE_DIR); \
 	  export LARGE_FILES=TRUE; \
@@ -94,7 +95,10 @@ build: $(SRC_DIRS)
 	  export USE_MPIF4=y; \
 	  export MPI_LIB=$${MPIHOME}/lib; \
 	  export MPI_INCLUDE=$${MPIHOME}/include; \
+          export LIBMPI="$(MPI_LINK)"; \
 	  export NWCHEM_TOP=/tmp/$(SOURCE_DIR); \
+          export MSG_COMMS=MPI; \
+          export IB_INCLUDE=/usr/include/inifiniband; \
 	  export BLASOPT="-L$${MKLLIB} -Wl,--start-group -lmkl_intel_ilp64 \
 	                  -lmkl_sequential -lmkl_core -Wl,--end-group -lpthread"; \
 	  rm -f /tmp/$(SOURCE_DIR); \
@@ -102,7 +106,7 @@ build: $(SRC_DIRS)
 	  cd src; \
 	  touch config/nwchem_config.h; \
 	  make nwchem_config NWCHEM_MODULES=all; \
-	  make -j 16 FC=mpif90 CC=mpicc \
+          make -j 16 FC=$(FC) CC=$(CC) \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
