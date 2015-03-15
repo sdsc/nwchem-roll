@@ -96,8 +96,6 @@ build: $(SRC_DIRS)
 	  export MPI_LIB=$${MPIHOME}/lib; \
 	  export MPI_INCLUDE=$${MPIHOME}/include; \
           export LIBMPI="$${MPI_LINK}"; \
-          echo "LIBMPI"; \
-          echo $${LIBMPI}; \
 	  export NWCHEM_TOP=/tmp/$(SOURCE_DIR); \
           export MSG_COMMS=MPI; \
           export IB_INCLUDE=/usr/include/inifiniband; \
