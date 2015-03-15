@@ -84,8 +84,8 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
-          MPI_LINK=`mpif90 -show|sed 's/.*-L/-L/'`; \
 	  $(MODULE_LOAD_MPI); \
+          MPI_LINK=`mpif90 -show|sed 's/.*-L/-L/'`; \
 	  cd $(SOURCE_DIR); \
 	  export LARGE_FILES=TRUE; \
 	  export NWCHEM_TARGET=LINUX64; \
@@ -96,6 +96,8 @@ build: $(SRC_DIRS)
 	  export MPI_LIB=$${MPIHOME}/lib; \
 	  export MPI_INCLUDE=$${MPIHOME}/include; \
           export LIBMPI="$${MPI_LINK}"; \
+          echo "LIBMPI"; \
+          echo $${LIBMPI}; \
 	  export NWCHEM_TOP=/tmp/$(SOURCE_DIR); \
           export MSG_COMMS=MPI; \
           export IB_INCLUDE=/usr/include/inifiniband; \
