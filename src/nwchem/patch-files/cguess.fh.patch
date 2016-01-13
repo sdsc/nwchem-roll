@@ -1,0 +1,11 @@
+--- nwchem-6.6/src/atomscf/cguess.fh	2015-10-01 10:33:03.000000000 -0700
++++ patch-files/cguess.fh	2016-01-12 15:16:04.660100021 -0800
+@@ -5,7 +5,7 @@
+ C$Id: cguess.fh 19708 2010-10-29 18:04:21Z d3y133 $
+       integer no                ! Maximum no. of orbitals on any atom ?
+       integer maxatsym          ! Maximum no. of syms (s/p/d/f)
+-      parameter (nb=500, no=60, maxatsym=4)
++      parameter (nb=600, no=60, maxatsym=4)
+ c
+       integer nsym              ! highest l-quantum no. used in atomic calc
+       integer nbas              ! No. of primitives of each sym

@@ -1,4 +1,4 @@
-# $Id$
+# Id$
 #
 # @Copyright@
 # 
@@ -80,6 +80,7 @@ LICENSE: $(SRC_DIRS)
 
 build: $(SRC_DIRS)
 	perl -pi -e 's/-m(arch|tune)=native//g' $(SOURCE_DIR)/src/config/makefile.h
+	patch $(SOURCE_DIR)/src/atomscf/cguess.fh patch-files/cguess.fh.patch
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
@@ -95,7 +96,7 @@ build: $(SRC_DIRS)
 	  export USE_MPIF4=y; \
 	  export MPI_LIB=$${MPIHOME}/lib; \
 	  export MPI_INCLUDE=$${MPIHOME}/include; \
-          export LIBMPI="$${MPI_LINK}"; \
+          export LIBMPI="$${MPI_LINK} -libverbs   -lrt  -lpthread"; \
 	  export NWCHEM_TOP=/tmp/$(SOURCE_DIR); \
           export MSG_COMMS=MPI; \
           export IB_INCLUDE=/usr/include/inifiniband; \
@@ -112,7 +113,7 @@ build: $(SRC_DIRS)
 
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT) $(ROOT)/$(PKGROOT)/{bin,data}
-	cp patch-files/dotnwchemrc $(ROOT)/$(PKGROOT)/.nwchemrc
+	cp dotnwchemrc $(ROOT)/$(PKGROOT)/.nwchemrc
 	perl -pi -e "s!NWCHEM_LIB!$(PKGROOT)/data!" $(ROOT)/$(PKGROOT)/.nwchemrc; \
 	( \
 	  cd $(SOURCE_DIR); \
