@@ -10,7 +10,7 @@ MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-nwchem
 VERSION        = 6.6
-RELEASE        = 0
+RELEASE        = 1
 PKGROOT        = /opt/nwchem
 
 SRC_SUBDIR     = nwchem
