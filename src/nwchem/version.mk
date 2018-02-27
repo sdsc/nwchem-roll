@@ -10,7 +10,7 @@ MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-nwchem
 VERSION        = 6.6
-RELEASE        = 1
+RELEASE        = 2
 PKGROOT        = /opt/nwchem
 
 SRC_SUBDIR     = nwchem
@@ -23,4 +23,5 @@ SOURCE_DIR     = nwchem-$(VERSION)
 
 TAR_GZ_PKGS    = $(SOURCE_PKG)
 
-RPM.EXTRAS     = AutoReq:No
+RPM.EXTRAS     = AutoReq:No\nAutoProv:No
+RPM.PREFIX     = $(PKGROOT)
