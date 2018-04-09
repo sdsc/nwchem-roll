@@ -64,18 +64,26 @@ include $(SDSCDEVEL)/Rules.mk
 
 $(NAME).spec: DESCRIPTION LICENSE
 
+MODULE_LOAD_NWCHEM_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
+DESCRIBE_NWCHEM_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
+
 DESCRIPTION:
+	echo "CUDAVERSION $(CUDAVERSION)"
 	$(MODULE_LOAD_CC); \
 	( \
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MKL); \
-	  $(DESCRIBE_MPI) \
+	  $(DESCRIBE_MPI); \
+          if test "$(CUDABUILD)" = "yes"; then \
+             $(DESCRIBE_NWCHEM_CUDA); \
+          fi \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
 	$(CHECK_LICENSE_FILES)
 	echo ECL > $@
+
 
 build: $(SRC_DIRS)
 	perl -pi -e 's/-m(arch|tune)=native//g' $(SOURCE_DIR)/src/config/makefile.h
@@ -83,6 +91,13 @@ build: $(SRC_DIRS)
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
+          if test "$(CUDABUILD)" = "yes"; then \
+              $(MODULE_LOAD_NWCHEM_CUDA); \
+              export TCE_CUDA=Y; \
+              export CUDA_LIBS="-L$${CUDAHOME}/lib64 -lcudart"; \
+              export CUDA_INCLUDE="-I $${CUDAHOME}/include"; \
+              export CUDA_FLAGS="-gencode arch=compute_30,code=sm_30 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60"; \
+          fi; \
 	  export MKLLIB=$${MKLHOME}/lib/intel64; \
 	  $(MODULE_LOAD_MPI); \
           MPI_LINK=`mpif90 -show|sed 's/.*-L/-L/'`; \
@@ -106,7 +121,7 @@ build: $(SRC_DIRS)
 	  cd src; \
 	  touch config/nwchem_config.h; \
 	  make nwchem_config NWCHEM_MODULES=all; \
-          make -j 16 FC=$(FC) CC=$(CC) \
+          make -j 16 FC=$(FC) CC=$(CC) CUDA=nvcc \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
@@ -120,7 +135,8 @@ install::
 	  cp -r src/basis/libraries $(ROOT)/$(PKGROOT)/data; \
 	  cp -r src/data $(ROOT)/$(PKGROOT); \
 	  cp -r src/nwpw/libraryps $(ROOT)/$(PKGROOT)/data; \
-	  cp -r src/tools/global/testing/ipcreset $(ROOT)/$(PKGROOT)/bin; \
+	  cp -r src/tools/ga-$(GA_RELEASE_NO)/global/testing/ipcreset $(ROOT)/$(PKGROOT)/bin; \
+          chmod 0755 $(ROOT)/$(PKGROOT)/bin/ipcreset; \
 	  find $(ROOT)/$(PKGROOT)/data -perm 0750 -exec chmod 0755 {} \; ; \
 	  find $(ROOT)/$(PKGROOT)/data -perm 0640 -exec chmod 0644 {} \; \
 	)
