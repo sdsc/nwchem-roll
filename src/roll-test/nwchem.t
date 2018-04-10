@@ -123,4 +123,4 @@ SKIP: {
 
 }
 
-`rm -f $TESTFILE* s2*`;
+`rm -f $TESTFILE* s2* tce*`;
