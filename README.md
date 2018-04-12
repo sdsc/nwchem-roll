@@ -73,7 +73,7 @@ For example:
 make ROLLCOMPILER=intel ROLLMPI=mvapich2_ib ROLLOPTS='cuda=cuda/8.0' 2>&1 | tee build.log
 ```
 
-Where "cuda/8.0" will turn on the nwchem cuda option and load the cuda/8.0 module. 
+Where "cuda/8.0" will turn on the nwchem cuda option and load the cuda/8.0 module.
 
 
 ## Installation
@@ -114,6 +114,5 @@ installation of the roll documentation, binaries and module files. To
 run the test scripts execute the following command(s):
 
 ```shell
-% /root/rolltests/nwchem.t 
+% /root/rolltests/nwchem.t
 ```
-
