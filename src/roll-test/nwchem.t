@@ -40,13 +40,59 @@ task scf
 END
 close(OUT);
 
+open(OUT, ">${TESTFILE}cuda.nwchem");
+print OUT <<END;
+#
+# Test for CCSD[T] & CCDS(T) codes in the TCE module
+# Reference data obtained by an independent code are
+#
+# CCSD(T) -0.21632467284
+# CCSD[T] -0.21640986353
+#
+# in units of hartree.
+#
+# The (T) & [T] codes and the reference data have been
+# provided by Alex A. Auer (University of Waterloo)
+#
+start tce_ccsd_t_h2o
+
+echo
+
+geometry units bohr
+O     0.00000000     0.00000000     0.22138519
+H     0.00000000    -1.43013023    -0.88554075
+H     0.00000000     1.43013023    -0.88554075
+end
+
+basis spherical
+H library cc-pVDZ
+O library cc-pVDZ
+end
+
+scf
+thresh 1.0e-10
+tol2e 1.0e-10
+singlet
+rhf
+end
+
+tce
+ccsd(t)
+io ga
+cuda 1
+end
+
+task tce energy
+END
+close(OUT);
+
 open(OUT, ">$TESTFILE.sh");
 print OUT <<END;
-module load nwchem
+module load nwchem \$1
 if test ! -e \$HOME/.nwchemrc; then
   ln -s /opt/nwchem/.nwchemrc \$HOME/
 fi
-mpirun -np 4 /opt/nwchem/bin/nwchem $TESTFILE.nwchem
+mpirun -np 4 /opt/nwchem/bin/nwchem $TESTFILE\$2.nwchem
 END
 close(OUT);
 
@@ -59,8 +105,15 @@ if($appliance =~ /$installedOnAppliancesPattern/) {
 SKIP: {
 
   skip 'nwchem not installed', 4 if ! $isInstalled;
-  $output = `bash $TESTFILE.sh 2>&1`;
+  $output = `bash $TESTFILE.sh CUDAVER 2>&1`;
   ok($output =~ /Total SCF energy =   -794.820927/, 'nwchem runs');
+  SKIP: {
+      skip 'CUDA_VISIBLE_DEVICES undef', 1
+      if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
+      $output = `module load nwchem CUDAVER;bash $TESTFILE.sh CUDAVER cuda 2>&1`;
+      ok($output =~ /CCSD\(T\) total energy \/ hartree       =       -76.243132/, 'nwchem cuda runs');
+    }
+
   `/bin/ls /opt/modulefiles/applications/nwchem/[0-9]* 2>&1`;
   ok($? == 0, 'nwchem module installed');
   `/bin/ls /opt/modulefiles/applications/nwchem/.version.[0-9]* 2>&1`;
@@ -70,4 +123,4 @@ SKIP: {
 
 }
 
-`rm -f $TESTFILE* s2*`;
+`rm -f $TESTFILE* s2* tce*`;

@@ -8,20 +8,29 @@ ifndef ROLLMPI
 endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
+CUDAVERSION = cuda
+CUDABUILD = no
+ifneq ("$(ROLLOPTS)", "$(subst cuda=,,$(ROLLOPTS))")
+  CUDAVERSION = $(subst cuda=,,$(filter cuda=%,$(ROLLOPTS)))
+  CUDABUILD = yes
+endif
+
 NAME           = sdsc-nwchem
-VERSION        = 6.6
-RELEASE        = 2
+VERSION        = 6.8
+RELEASE        = 0
 PKGROOT        = /opt/nwchem
 
 SRC_SUBDIR     = nwchem
 
-SOURCE_NAME    = Nwchem
-SOURCE_SUFFIX  = tar.gz
-SOURCE_VERSION = 6.6.revision27746-src.2015-10-20
+SOURCE_NAME    = nwchem
+SOURCE_SUFFIX  = tar.bz2
+SOURCE_VERSION = $(VERSION)
 SOURCE_PKG     = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
 SOURCE_DIR     = nwchem-$(VERSION)
 
-TAR_GZ_PKGS    = $(SOURCE_PKG)
+GA_RELEASE_NO=5.6.3
+
+TAR_BZ2_PKGS    = $(SOURCE_PKG)
 
 RPM.EXTRAS     = AutoReq:No\nAutoProv:No
 RPM.PREFIX     = $(PKGROOT)
