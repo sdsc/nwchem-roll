@@ -66,10 +66,12 @@ The build process recognizes "gnu", "intel" or "pgi" as the value for the
 `ROLLCOMPILER` variable; any MPI modulefile name may be used as the value of
 the `ROLLMPI` variable.  The default values are "gnu" and "rocks-openmpi".
 
-The ROLLOPTS variable has a "cuda" option for gpu support.
+The `ROLLOPTS` variable has a "cuda" option for gpu support.
 For example:
 
+```shell
 make ROLLCOMPILER=intel ROLLMPI=mvapich2_ib ROLLOPTS='cuda=cuda/8.0' 2>&1 | tee build.log
+```
 
 Where "cuda/8.0" will turn on the nwchem cuda option and load the cuda/8.0 module. 
 
