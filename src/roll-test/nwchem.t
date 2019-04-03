@@ -40,7 +40,7 @@ task scf
 END
 close(OUT);
 
-open(OUT, ">${TESTFILE}cuda.nwchem");
+open(OUT, ">${TESTFILE}.cuda.nwchem");
 print OUT <<END;
 #
 # Test for CCSD[T] & CCDS(T) codes in the TCE module
@@ -92,7 +92,7 @@ module load nwchem \$1
 if test ! -e \$HOME/.nwchemrc; then
   ln -s /opt/nwchem/.nwchemrc \$HOME/
 fi
-mpirun -np 4 /opt/nwchem/bin/nwchem $TESTFILE\$2.nwchem
+mpirun -np 4 /opt/nwchem/bin/nwchem\$2 $TESTFILE\$2.nwchem
 END
 close(OUT);
 
@@ -110,7 +110,7 @@ SKIP: {
   SKIP: {
       skip 'CUDA_VISIBLE_DEVICES undef', 1
       if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
-      $output = `module load nwchem CUDAVER;bash $TESTFILE.sh CUDAVER cuda 2>&1`;
+      $output = `module load nwchem CUDAVER;bash $TESTFILE.sh CUDAVER .cuda 2>&1`;
       ok($output =~ /CCSD\(T\) total energy \/ hartree       =       -76.243132/, 'nwchem cuda runs');
     }
 

@@ -1,6 +1,6 @@
 NAME       = sdsc-nwchem-roll-test
 VERSION    = 2
-RELEASE    = 0
+RELEASE    = 1
 PKGROOT    = /root/rolltests
 
 ifneq ("$(ROLLOPTS)", "$(subst cuda=,,$(ROLLOPTS))")

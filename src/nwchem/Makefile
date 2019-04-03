@@ -62,6 +62,8 @@ include Rules.mk
 include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
 
+CACHE_DIR=$(REDHAT.ROOT)/cache/bin
+
 $(NAME).spec: DESCRIPTION LICENSE
 
 MODULE_LOAD_NWCHEM_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
@@ -88,16 +90,10 @@ LICENSE: $(SRC_DIRS)
 build: $(SRC_DIRS)
 	perl -pi -e 's/-m(arch|tune)=native//g' $(SOURCE_DIR)/src/config/makefile.h
 	patch $(SOURCE_DIR)/src/atomscf/cguess.fh patch-files/cguess.fh.patch
+	mkdir -p $(CACHE_DIR)
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
-          if test "$(CUDABUILD)" = "yes"; then \
-              $(MODULE_LOAD_NWCHEM_CUDA); \
-              export TCE_CUDA=Y; \
-              export CUDA_LIBS="-L$${CUDAHOME}/lib64 -lcudart"; \
-              export CUDA_INCLUDE="-I $${CUDAHOME}/include"; \
-              export CUDA_FLAGS="-gencode arch=compute_30,code=sm_30 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60"; \
-          fi; \
 	  export MKLLIB=$${MKLHOME}/lib/intel64; \
 	  $(MODULE_LOAD_MPI); \
           MPI_LINK=`mpif90 -show|sed 's/.*-L/-L/'`; \
@@ -121,7 +117,24 @@ build: $(SRC_DIRS)
 	  cd src; \
 	  touch config/nwchem_config.h; \
 	  make nwchem_config NWCHEM_MODULES=all; \
-          make -j 16 FC=$(FC) CC=$(CC) CUDA=nvcc \
+          make -j 16 FC=$(FC) CC=$(CC); \
+	  cp ../bin/LINUX64/nwchem $(CACHE_DIR); \
+          if test "$(CUDABUILD)" = "yes"; then \
+              make realclean; \
+              $(MODULE_LOAD_NWCHEM_CUDA); \
+              export TCE_CUDA=Y; \
+              export CUDA_LIBS="-L$${CUDAHOME}/lib64 -lcudart"; \
+              export CUDA_INCLUDE="-I $${CUDAHOME}/include"; \
+              export CUDA_FLAGS="-gencode arch=compute_30,code=sm_30 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60"; \
+              cd ..; \
+	      rm -f /tmp/$(SOURCE_DIR); \
+              ln -s `pwd` /tmp/$(SOURCE_DIR); \
+              cd src; \
+              touch config/nwchem_config.h; \
+	      make nwchem_config NWCHEM_MODULES=all; \
+              make -j 16 FC=$(FC) CC=$(CC) CUDA=nvcc; \
+	      cp ../bin/LINUX64/nwchem $(CACHE_DIR)/nwchem.cuda; \
+          fi; \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
@@ -131,7 +144,7 @@ install::
 	perl -pi -e "s!NWCHEM_LIB!$(PKGROOT)/data!" $(ROOT)/$(PKGROOT)/.nwchemrc; \
 	( \
 	  cd $(SOURCE_DIR); \
-	  cp bin/LINUX64/nwchem $(ROOT)/$(PKGROOT)/bin; \
+	  cp $(CACHE_DIR)/* $(ROOT)/$(PKGROOT)/bin; \
 	  cp -r src/basis/libraries $(ROOT)/$(PKGROOT)/data; \
 	  cp -r src/data $(ROOT)/$(PKGROOT); \
 	  cp -r src/nwpw/libraryps $(ROOT)/$(PKGROOT)/data; \
@@ -144,4 +157,4 @@ install::
 	@echo "::: Package $(NAME) build complete :::"
 
 clean::
-	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE
+	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE $(CACHE_DIR)
