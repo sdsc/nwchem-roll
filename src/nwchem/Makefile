@@ -88,26 +88,7 @@ LICENSE: $(SRC_DIRS)
 	$(CHECK_LICENSE_FILES)
 	echo ECL > $@
 
-nwchempatchdownload : $(NWCHEM_PATCHES)
-	for NWCHEM_PATCH in $(PATCH_PKGS); do \
-           echo "::: Downloading $(DL.SERVER)/$(DL.PATH)/$${NWCHEM_PATCH} :::"; \
-           if [ -f $${NWCHEM_PATCH} ]; then \
-                echo "::: $${NWCHEM_PATCH} exists. Skipping... :::" ; \
-           else \
-                $(DL.CMD) $(DL.OPTS) $(DL.SERVER)/$(DL.PATH)/$${NWCHEM_PATCH} ; \
-                echo "::: Verifying size of $${NWCHEM_PATCH} :::" ; \
-                $(GREP.CMD) `$(STAT.CMD) --printf="%s" $${NWCHEM_PATCH}` $(VERIFY.HASHES) ; \
-                echo "::: Verifying hash of $${NWCHEM_PATCH} :::" ; \
-                $(GREP.CMD) `$(VERIFY.CMD) $(VERIFY.OPTS) $${NWCHEM_PATCH} ` $(VERIFY.HASHES) ; \
-                echo "" ; \
-           fi; \
-           echo "::: Unbundling $${NWCHEM_PATCH} :::"; \
-           gunzip $${NWCHEM_PATCH}; \
-           echo ""; \
-        done
-
-
-build: $(SRC_DIRS) nwchempatchdownload
+build: $(SRC_DIRS)
 	perl -pi -e 's/-m(arch|tune)=native//g' $(SOURCE_DIR)/src/config/makefile.h
 	patch $(SOURCE_DIR)/src/atomscf/cguess.fh patch-files/cguess.fh.patch
 	mkdir -p $(CACHE_DIR)
@@ -118,9 +99,6 @@ build: $(SRC_DIRS) nwchempatchdownload
 	  $(MODULE_LOAD_MPI); \
           MPI_LINK=`mpif90 -show|sed 's/.*-L/-L/'`; \
 	  cd $(SOURCE_DIR); \
-          for NWCHEM_PATCH in $(NWCHEM_PATCHES); do \
-                patch -p0 < ../$${NWCHEM_PATCH}.patch; \
-          done; \
 	  export LARGE_FILES=TRUE; \
 	  export NWCHEM_TARGET=LINUX64; \
 	  export ARMCI_NETWORK=OPENIB; \
@@ -187,4 +165,4 @@ install::
 	@echo "::: Package $(NAME) build complete :::"
 
 clean:: $(NWCHEM_PATCHES)
-	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE $(CACHE_DIR) $(PATCHES)
+	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE $(CACHE_DIR)
