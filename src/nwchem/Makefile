@@ -164,5 +164,5 @@ install::
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) build complete :::"
 
-clean:: $(NWCHEM_PATCHES)
+clean:: 
 	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE $(CACHE_DIR)
