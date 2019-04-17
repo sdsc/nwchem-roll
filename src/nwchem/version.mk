@@ -37,6 +37,7 @@ $(NWCHEM_PATCHES):
 	$(eval $(PATCH_NAME)_PKG = $(PATCH_NAME).$($(PATCH_NAME)_SUFFIX))
 	echo "PACKAGE $($(PATCH_NAME)_PKG)"
 	$(eval PATCH_PKGS  += $($(PATCH_NAME)_PKG))
+	$(eval PATCHES  += $(PATCH_NAME).patch
 
 GA_RELEASE_NO=5.6.3
 

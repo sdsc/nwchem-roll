@@ -187,4 +187,4 @@ install::
 	@echo "::: Package $(NAME) build complete :::"
 
 clean::
-	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE $(CACHE_DIR)
+	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE $(CACHE_DIR) $(PATCHES)
