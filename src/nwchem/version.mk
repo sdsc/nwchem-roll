@@ -32,12 +32,11 @@ NWCHEM_PATCHES = Tddft_mxvec20 Tools_lib64 Config_libs66 Cosmo_meminit Sym_abeli
 
 $(NWCHEM_PATCHES):
 	$(eval PATCH_NAME  = $@)
-	echo "PATCH NAME $(PATCH_NAME)"
 	$(eval $(PATCH_NAME)_SUFFIX = patch.gz)
 	$(eval $(PATCH_NAME)_PKG = $(PATCH_NAME).$($(PATCH_NAME)_SUFFIX))
-	echo "PACKAGE $($(PATCH_NAME)_PKG)"
 	$(eval PATCH_PKGS  += $($(PATCH_NAME)_PKG))
-	$(eval PATCHES  += $(PATCH_NAME).patch
+	$(eval PATCHES  += $(PATCH_NAME).patch)
+	echo "PATCHES $(PATCHES)"
 
 GA_RELEASE_NO=5.6.3
 

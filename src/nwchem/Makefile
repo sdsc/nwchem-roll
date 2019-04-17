@@ -119,7 +119,7 @@ build: $(SRC_DIRS) nwchempatchdownload
           MPI_LINK=`mpif90 -show|sed 's/.*-L/-L/'`; \
 	  cd $(SOURCE_DIR); \
           for NWCHEM_PATCH in $(NWCHEM_PATCHES); do \
-                patch -p0 < $${NWCHEM_PATCH}.patch; \
+                patch -p0 < ../$${NWCHEM_PATCH}.patch; \
           done; \
 	  export LARGE_FILES=TRUE; \
 	  export NWCHEM_TARGET=LINUX64; \
@@ -186,5 +186,5 @@ install::
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) build complete :::"
 
-clean::
+clean:: $(NWCHEM_PATCHES)
 	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE $(CACHE_DIR) $(PATCHES)
