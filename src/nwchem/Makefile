@@ -62,6 +62,8 @@ include Rules.mk
 include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
 
+.PHONY: $(NWCHEM_PATCHES)
+
 CACHE_DIR=$(REDHAT.ROOT)/cache/bin
 
 $(NAME).spec: DESCRIPTION LICENSE
@@ -86,8 +88,26 @@ LICENSE: $(SRC_DIRS)
 	$(CHECK_LICENSE_FILES)
 	echo ECL > $@
 
+nwchempatchdownload : $(NWCHEM_PATCHES)
+	for NWCHEM_PATCH in $(PATCH_PKGS); do \
+           echo "::: Downloading $(DL.SERVER)/$(DL.PATH)/$${NWCHEM_PATCH} :::"; \
+           if [ -f $${NWCHEM_PATCH} ]; then \
+                echo "::: $${NWCHEM_PATCH} exists. Skipping... :::" ; \
+           else \
+                $(DL.CMD) $(DL.OPTS) $(DL.SERVER)/$(DL.PATH)/$${NWCHEM_PATCH} ; \
+                echo "::: Verifying size of $${NWCHEM_PATCH} :::" ; \
+                $(GREP.CMD) `$(STAT.CMD) --printf="%s" $${NWCHEM_PATCH}` $(VERIFY.HASHES) ; \
+                echo "::: Verifying hash of $${NWCHEM_PATCH} :::" ; \
+                $(GREP.CMD) `$(VERIFY.CMD) $(VERIFY.OPTS) $${NWCHEM_PATCH} ` $(VERIFY.HASHES) ; \
+                echo "" ; \
+           fi; \
+           echo "::: Unbundling $${NWCHEM_PATCH} :::"; \
+           gunzip $${NWCHEM_PATCH}; \
+           echo ""; \
+        done
 
-build: $(SRC_DIRS)
+
+build: $(SRC_DIRS) nwchempatchdownload
 	perl -pi -e 's/-m(arch|tune)=native//g' $(SOURCE_DIR)/src/config/makefile.h
 	patch $(SOURCE_DIR)/src/atomscf/cguess.fh patch-files/cguess.fh.patch
 	mkdir -p $(CACHE_DIR)
@@ -98,20 +118,30 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_MPI); \
           MPI_LINK=`mpif90 -show|sed 's/.*-L/-L/'`; \
 	  cd $(SOURCE_DIR); \
+          for NWCHEM_PATCH in $(NWCHEM_PATCHES); do \
+                patch -p0 < $${NWCHEM_PATCH}.patch; \
+          done; \
 	  export LARGE_FILES=TRUE; \
 	  export NWCHEM_TARGET=LINUX64; \
 	  export ARMCI_NETWORK=OPENIB; \
+          export USE_NOFSCHECK=TRUE; \
+          export USE_NOIO=TRUE; \
+          export USE_OPENMP=TRUE; \
 	  export USE_MPI=y; \
-	  export USE_MPIF=y; \
-	  export USE_MPIF4=y; \
+	  export SE_MPIF=y; \
+	  export SE_MPIF4=y; \
 	  export MPI_LIB=$${MPIHOME}/lib; \
 	  export MPI_INCLUDE=$${MPIHOME}/include; \
           export LIBMPI="$${MPI_LINK} -libverbs   -lrt  -lpthread"; \
 	  export NWCHEM_TOP=/tmp/$(SOURCE_DIR); \
+          export MA_USE_ARMCI_NEW=Y; \
+          export LIB_DEFINES=-DDFLT_TOT_MEM=98304000; \
           export MSG_COMMS=MPI; \
           export IB_INCLUDE=/usr/include/inifiniband; \
+          export IB_LIB_NAME=-libumad -libverbs; \
 	  export BLASOPT="-L$${MKLLIB} -Wl,--start-group -lmkl_intel_ilp64 \
 	                  -lmkl_sequential -lmkl_core -Wl,--end-group -lpthread"; \
+          export HAS_BLAS=yes; \
 	  rm -f /tmp/$(SOURCE_DIR); \
 	  ln -s `pwd` /tmp/$(SOURCE_DIR); \
 	  cd src; \
