@@ -133,7 +133,7 @@ build: $(SRC_DIRS)
               export TCE_CUDA=Y; \
               export CUDA_LIBS="-L$${CUDAHOME}/lib64 -lcudart"; \
               export CUDA_INCLUDE="-I $${CUDAHOME}/include"; \
-              export CUDA_FLAGS="-gencode arch=compute_30,code=sm_30 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60"; \
+              export CUDA_FLAGS="-gencode arch=compute_30,code=sm_30 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 arch=compute_61,code=sm_61 arch=compute_70,code=sm_70"; \
               cd ..; \
 	      rm -f /tmp/$(SOURCE_DIR); \
               ln -s `pwd` /tmp/$(SOURCE_DIR); \
