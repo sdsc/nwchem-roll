@@ -106,8 +106,8 @@ build: $(SRC_DIRS)
           export USE_NOIO=TRUE; \
           export USE_OPENMP=TRUE; \
 	  export USE_MPI=y; \
-	  export SE_MPIF=y; \
-	  export SE_MPIF4=y; \
+	  export USE_MPIF=y; \
+	  export USE_MPIF4=y; \
 	  export MPI_LIB=$${MPIHOME}/lib; \
 	  export MPI_INCLUDE=$${MPIHOME}/include; \
           export LIBMPI="$${MPI_LINK} -libverbs   -lrt  -lpthread"; \
