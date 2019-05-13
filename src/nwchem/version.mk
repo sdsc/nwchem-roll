@@ -17,7 +17,7 @@ endif
 
 NAME           = sdsc-nwchem
 VERSION        = 6.8
-RELEASE        = 0
+RELEASE        = 1
 PKGROOT        = /opt/nwchem
 
 SRC_SUBDIR     = nwchem
