@@ -93,6 +93,7 @@ build: $(SRC_DIRS)
 	patch $(SOURCE_DIR)/src/atomscf/cguess.fh patch-files/cguess.fh.patch
 	mkdir -p $(CACHE_DIR)
 	( \
+          $(call MODULE_LOAD_COMPILER,gnu,gcc); \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
 	  export MKLLIB=$${MKLHOME}/lib/intel64; \
