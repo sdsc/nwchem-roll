@@ -116,7 +116,7 @@ build: $(SRC_DIRS)
           export LIB_DEFINES=-DDFLT_TOT_MEM=98304000; \
           export MSG_COMMS=MPI; \
           export IB_INCLUDE=/usr/include/inifiniband; \
-          export IB_LIB_NAME=-libumad -libverbs; \
+          export IB_LIB_NAME="-libumad -libverbs"; \
 	  export BLASOPT="-L$${MKLLIB} -Wl,--start-group -lmkl_intel_ilp64 \
 	                  -lmkl_sequential -lmkl_core -Wl,--end-group -lpthread"; \
           export HAS_BLAS=yes; \
